@@ -8,6 +8,7 @@ import DevicesPage from "./pages/DevicesPage";
 import UsersPage from "./pages/UsersPage";
 import TechniciansPage from "./pages/TechniciansPage";
 import ProfilePage from "./pages/ProfilePage";
+import ServiceReportsPage from "./pages/ServiceReportsPage";
 
 import Layout from "./components/Layout";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -28,6 +29,7 @@ function App() {
           <Route path="users" element={<UsersPage />} />
           <Route path="technicians" element={<TechniciansPage />} />
           <Route path="profile" element={<ProfilePage />} />
+          <Route path="reports" element={<ServiceReportsPage />} />
         </Route>
       </Route>
 

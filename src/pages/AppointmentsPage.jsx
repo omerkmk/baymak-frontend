@@ -2,12 +2,19 @@ import { useState, useEffect } from "react";
 import axiosClient from "../api/axiosClient";
 
 export default function AppointmentsPage() {
+  const role = localStorage.getItem("role");
   const [appointments, setAppointments] = useState(null);
   const [devices, setDevices] = useState([]);
+  const [technicians, setTechnicians] = useState([]);
   const [error, setError] = useState(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showDetailModal, setShowDetailModal] = useState(false);
+  const [showStatusModal, setShowStatusModal] = useState(false);
+  const [showAssignModal, setShowAssignModal] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
+  const [selectedStatus, setSelectedStatus] = useState("");
+  const [selectedTechnicianId, setSelectedTechnicianId] = useState("");
+  const [statusFilter, setStatusFilter] = useState("ALL");
   const [formData, setFormData] = useState({
     deviceId: "",
     date: "",
@@ -16,20 +23,42 @@ export default function AppointmentsPage() {
 
   useEffect(() => {
     fetchAppointments();
-    fetchDevices();
-  }, []);
+    if (role === "CUSTOMER") {
+      fetchDevices();
+    }
+    if (role === "ADMIN") {
+      fetchTechnicians();
+    }
+  }, [role, statusFilter]);
 
   const fetchAppointments = () => {
     setError(null);
+    let endpoint = "";
+
+    if (role === "CUSTOMER") {
+      endpoint = "/api/appointments/my";
+    } else if (role === "TECHNICIAN") {
+      endpoint = "/api/appointments/assigned";
+    } else if (role === "ADMIN") {
+      if (statusFilter === "ALL") {
+        endpoint = "/api/appointments/all";
+      } else {
+        endpoint = `/api/appointments/status/${statusFilter}`;
+      }
+    } else {
+      setAppointments([]);
+      return;
+    }
+
     axiosClient
-      .get("/api/appointments/my")
+      .get(endpoint)
       .then((res) => {
         setAppointments(res.data || []);
       })
       .catch((err) => {
         console.error("Appointments fetch error:", err);
         const errorMsg =
-          err.response?.data?.message || "Randevular yüklenirken bir hata oluştu.";
+          err.response?.data?.message || "An error occurred while loading appointments.";
         setError(errorMsg);
         setAppointments([]);
       });
@@ -46,12 +75,23 @@ export default function AppointmentsPage() {
       });
   };
 
+  const fetchTechnicians = () => {
+    axiosClient
+      .get("/api/technicians")
+      .then((res) => {
+        setTechnicians(res.data || []);
+      })
+      .catch((err) => {
+        console.error("Technicians fetch error:", err);
+      });
+  };
+
   const handleCreateAppointment = async (e) => {
     e.preventDefault();
     setError(null);
 
     if (!formData.deviceId || !formData.date || !formData.time) {
-      setError("Lütfen tüm alanları doldurun.");
+      setError("Please fill in all fields.");
       return;
     }
 
@@ -59,9 +99,9 @@ export default function AppointmentsPage() {
     const selectedDate = new Date(formData.date);
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    
+
     if (selectedDate < today) {
-      setError("Geçmiş bir tarih seçemezsiniz. Lütfen bugünden ileri bir tarih seçin.");
+      setError("You cannot select a past date. Please select a date from today onwards.");
       return;
     }
 
@@ -79,13 +119,13 @@ export default function AppointmentsPage() {
     } catch (err) {
       console.error(err);
       const errorMsg =
-        err.response?.data?.message || "Randevu oluşturulurken bir hata oluştu.";
+        err.response?.data?.message || "An error occurred while creating the appointment.";
       setError(errorMsg);
     }
   };
 
   const handleCancelAppointment = async (id) => {
-    if (!window.confirm("Bu randevuyu iptal etmek istediğinize emin misiniz?")) {
+    if (!window.confirm("Are you sure you want to cancel this appointment?")) {
       return;
     }
 
@@ -99,28 +139,111 @@ export default function AppointmentsPage() {
     } catch (err) {
       console.error(err);
       const errorMsg =
-        err.response?.data?.message || "Randevu iptal edilirken bir hata oluştu.";
+        err.response?.data?.message || "An error occurred while canceling the appointment.";
       alert(errorMsg);
     }
   };
 
   const handleViewDetail = async (id) => {
     try {
-      const res = await axiosClient.get(`/api/appointments/my/${id}`);
-      setSelectedAppointment(res.data);
-      setShowDetailModal(true);
+      let endpoint = "";
+      if (role === "CUSTOMER") {
+        endpoint = `/api/appointments/my/${id}`;
+      } else if (role === "TECHNICIAN") {
+        // For technician, we can use the appointment from the list
+        const appointment = appointments.find((apt) => apt.id === id);
+        if (appointment) {
+          setSelectedAppointment(appointment);
+          setShowDetailModal(true);
+          return;
+        }
+      } else if (role === "ADMIN") {
+        // For admin, we can use the appointment from the list
+        const appointment = appointments.find((apt) => apt.id === id);
+        if (appointment) {
+          setSelectedAppointment(appointment);
+          setShowDetailModal(true);
+          return;
+        }
+      }
+
+      if (endpoint) {
+        const res = await axiosClient.get(endpoint);
+        setSelectedAppointment(res.data);
+        setShowDetailModal(true);
+      }
     } catch (err) {
       console.error(err);
       const errorMsg =
-        err.response?.data?.message || "Randevu detayları yüklenirken bir hata oluştu.";
+        err.response?.data?.message || "An error occurred while loading appointment details.";
       alert(errorMsg);
     }
+  };
+
+  const handleUpdateStatus = async () => {
+    if (!selectedStatus || !selectedAppointment) {
+      setError("Please select a status.");
+      return;
+    }
+
+    try {
+      await axiosClient.put(`/api/appointments/${selectedAppointment.id}/status`, {
+        status: selectedStatus,
+      });
+      setShowStatusModal(false);
+      setSelectedStatus("");
+      setSelectedAppointment(null);
+      fetchAppointments();
+    } catch (err) {
+      console.error(err);
+      const errorMsg =
+        err.response?.data?.message || "An error occurred while updating appointment status.";
+      alert(errorMsg);
+    }
+  };
+
+  const handleAssignTechnician = async () => {
+    if (!selectedTechnicianId || !selectedAppointment) {
+      setError("Please select a technician.");
+      return;
+    }
+
+    try {
+      await axiosClient.put(`/api/appointments/${selectedAppointment.id}/assign`, {
+        technicianId: parseInt(selectedTechnicianId),
+      });
+      setShowAssignModal(false);
+      setSelectedTechnicianId("");
+      setSelectedAppointment(null);
+      fetchAppointments();
+    } catch (err) {
+      console.error(err);
+      const errorMsg =
+        err.response?.data?.message || "An error occurred while assigning technician.";
+      alert(errorMsg);
+    }
+  };
+
+  const openStatusModal = (appointment) => {
+    setSelectedAppointment(appointment);
+    setSelectedStatus(appointment.status);
+    setShowStatusModal(true);
+  };
+
+  const openAssignModal = (appointment) => {
+    setSelectedAppointment(appointment);
+    setSelectedTechnicianId(appointment.technicianId || "");
+    setShowAssignModal(true);
   };
 
   const closeModals = () => {
     setShowCreateModal(false);
     setShowDetailModal(false);
+    setShowStatusModal(false);
+    setShowAssignModal(false);
     setSelectedAppointment(null);
+    setSelectedStatus("");
+    setSelectedTechnicianId("");
     setFormData({ deviceId: "", date: "", time: "" });
     setError(null);
   };
@@ -141,6 +264,12 @@ export default function AppointmentsPage() {
           ...baseStyle,
           backgroundColor: "#fff3cd",
           color: "#856404",
+        };
+      case "ASSIGNED":
+        return {
+          ...baseStyle,
+          backgroundColor: "#cfe2ff",
+          color: "#084298",
         };
       case "IN_PROGRESS":
         return {
@@ -172,22 +301,31 @@ export default function AppointmentsPage() {
   const getStatusLabel = (status) => {
     switch (status) {
       case "PENDING":
-        return "Beklemede";
+        return "Pending";
+      case "ASSIGNED":
+        return "Assigned";
       case "IN_PROGRESS":
-        return "Devam Ediyor";
+        return "In Progress";
       case "COMPLETED":
-        return "Tamamlandı";
+        return "Completed";
       case "CANCELLED":
-        return "İptal Edildi";
+        return "Cancelled";
       default:
         return status;
     }
   };
 
+  const getPageTitle = () => {
+    if (role === "CUSTOMER") return "My Appointments";
+    if (role === "TECHNICIAN") return "Assigned Appointments";
+    if (role === "ADMIN") return "All Appointments";
+    return "Appointments";
+  };
+
   const formatDate = (dateString) => {
     if (!dateString) return "-";
     const date = new Date(dateString);
-    return date.toLocaleDateString("tr-TR", {
+    return date.toLocaleDateString("en-US", {
       year: "numeric",
       month: "long",
       day: "numeric",
@@ -199,7 +337,7 @@ export default function AppointmentsPage() {
     return timeString.substring(0, 5); // HH:mm format
   };
 
-  // Styles - Modern & Aesthetic
+  // Styles
   const containerStyle = {
     padding: "32px",
     backgroundColor: "#f8f9fa",
@@ -357,8 +495,8 @@ export default function AppointmentsPage() {
         <div style={headerStyle}>
           <img src="/baymak.png" alt="Baymak Logo" style={logoStyle} />
           <div style={{ flex: 1 }}>
-            <h1 style={titleStyle}>Randevularım</h1>
-            <p style={{ color: "#6c757d", margin: "8px 0 0 0" }}>Yükleniyor...</p>
+            <h1 style={titleStyle}>{getPageTitle()}</h1>
+            <p style={{ color: "#6c757d", margin: "8px 0 0 0" }}>Loading...</p>
           </div>
         </div>
       </div>
@@ -372,32 +510,60 @@ export default function AppointmentsPage() {
         <img src="/baymak.png" alt="Baymak Logo" style={logoStyle} />
         <div style={titleSectionStyle}>
           <div>
-            <h1 style={titleStyle}>Randevularım</h1>
+            <h1 style={titleStyle}>{getPageTitle()}</h1>
             <p style={{ color: "#6c757d", margin: "8px 0 0 0", fontSize: "15px" }}>
-              {appointments.length} {appointments.length === 1 ? "randevu" : "randevu"} kayıtlı
+              {appointments.length} {appointments.length === 1 ? "appointment" : "appointments"} registered
             </p>
           </div>
-          <button
-            style={buttonStyle}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = "#007c30";
-              e.currentTarget.style.transform = "translateY(-2px)";
-              e.currentTarget.style.boxShadow = "0 6px 16px rgba(0, 150, 57, 0.35)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = "#009639";
-              e.currentTarget.style.transform = "translateY(0)";
-              e.currentTarget.style.boxShadow = "0 4px 12px rgba(0, 150, 57, 0.25)";
-            }}
-            onClick={() => setShowCreateModal(true)}
-            disabled={devices.length === 0}
-          >
-            <span style={{ fontSize: "18px" }}>+</span> Yeni Randevu
-          </button>
+          <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
+            {/* Status Filter for Admin */}
+            {role === "ADMIN" && (
+              <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                style={{
+                  ...selectStyle,
+                  marginBottom: 0,
+                  padding: "10px 16px",
+                  width: "auto",
+                  minWidth: "150px",
+                }}
+              >
+                <option value="ALL">All Status</option>
+                <option value="PENDING">Pending</option>
+                <option value="ASSIGNED">Assigned</option>
+                <option value="IN_PROGRESS">In Progress</option>
+                <option value="COMPLETED">Completed</option>
+                <option value="CANCELLED">Cancelled</option>
+              </select>
+            )}
+
+            {/* Create Button for Customer */}
+            {role === "CUSTOMER" && (
+              <button
+                style={buttonStyle}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = "#007c30";
+                  e.currentTarget.style.transform = "translateY(-2px)";
+                  e.currentTarget.style.boxShadow = "0 6px 16px rgba(0, 150, 57, 0.35)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = "#009639";
+                  e.currentTarget.style.transform = "translateY(0)";
+                  e.currentTarget.style.boxShadow = "0 4px 12px rgba(0, 150, 57, 0.25)";
+                }}
+                onClick={() => setShowCreateModal(true)}
+                disabled={devices.length === 0}
+              >
+                <span style={{ fontSize: "18px" }}>+</span> New Appointment
+              </button>
+            )}
+          </div>
         </div>
       </div>
 
-      {devices.length === 0 && (
+      {/* Warning for Customer without devices */}
+      {role === "CUSTOMER" && devices.length === 0 && (
         <div
           style={{
             marginBottom: "24px",
@@ -410,10 +576,10 @@ export default function AppointmentsPage() {
             fontWeight: "500",
           }}
         >
-          ⚠️ Randevu oluşturmak için önce bir cihaz eklemeniz gerekiyor.{" "}
+          ⚠️ You need to add a device first to create an appointment.{" "}
           <a href="/devices" style={{ color: "#009639", fontWeight: "600", textDecoration: "none" }}>
-            Cihazlarım
-          </a> sayfasına gidin.
+            My Devices
+          </a> page.
         </div>
       )}
 
@@ -446,10 +612,14 @@ export default function AppointmentsPage() {
         >
           <div style={{ fontSize: "64px", marginBottom: "16px" }}>📅</div>
           <p style={{ color: "#6c757d", fontSize: "16px", margin: "8px 0" }}>
-            Henüz randevu oluşturulmamış.
+            {role === "CUSTOMER" && "No appointments created yet."}
+            {role === "TECHNICIAN" && "No appointments assigned to you yet."}
+            {role === "ADMIN" && "No appointments found."}
           </p>
           <p style={{ color: "#adb5bd", fontSize: "14px", margin: "4px 0 0 0" }}>
-            İlk randevunuzu oluşturmak için yukarıdaki butona tıklayın.
+            {role === "CUSTOMER" && "Click the button above to create your first appointment."}
+            {role === "TECHNICIAN" && "You will see appointments here when they are assigned to you."}
+            {role === "ADMIN" && "Appointments will appear here when customers create them."}
           </p>
         </div>
       ) : (
@@ -458,12 +628,13 @@ export default function AppointmentsPage() {
             <thead>
               <tr>
                 <th style={thStyle}>ID</th>
-                <th style={thStyle}>Cihaz</th>
-                <th style={thStyle}>Tarih</th>
-                <th style={thStyle}>Saat</th>
-                <th style={thStyle}>Durum</th>
-                <th style={thStyle}>Teknisyen</th>
-                <th style={thStyle}>İşlemler</th>
+                {role === "ADMIN" && <th style={thStyle}>Customer</th>}
+                <th style={thStyle}>Device</th>
+                <th style={thStyle}>Date</th>
+                <th style={thStyle}>Time</th>
+                <th style={thStyle}>Status</th>
+                <th style={thStyle}>Technician</th>
+                <th style={thStyle}>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -492,6 +663,13 @@ export default function AppointmentsPage() {
                       #{appointment.id}
                     </span>
                   </td>
+                  {role === "ADMIN" && (
+                    <td style={tdStyle}>
+                      <span style={{ fontWeight: "500" }}>
+                        {appointment.customerName || "-"}
+                      </span>
+                    </td>
+                  )}
                   <td style={tdStyle}>
                     <div>
                       <div style={{ fontWeight: "500", marginBottom: "4px" }}>
@@ -521,7 +699,7 @@ export default function AppointmentsPage() {
                   <td style={tdStyle}>
                     {appointment.technicianName || (
                       <span style={{ color: "#6c757d", fontStyle: "italic" }}>
-                        Atanmadı
+                        Not Assigned
                       </span>
                     )}
                   </td>
@@ -542,9 +720,11 @@ export default function AppointmentsPage() {
                       }}
                       onClick={() => handleViewDetail(appointment.id)}
                     >
-                      👁️ Detay
+                      👁️ Detail
                     </button>
-                    {appointment.status === "PENDING" && (
+
+                    {/* Customer Actions */}
+                    {role === "CUSTOMER" && appointment.status === "PENDING" && (
                       <button
                         style={{
                           ...actionButtonStyle,
@@ -561,8 +741,59 @@ export default function AppointmentsPage() {
                         }}
                         onClick={() => handleCancelAppointment(appointment.id)}
                       >
-                        🗑️ İptal
+                        🗑️ Cancel
                       </button>
+                    )}
+
+                    {/* Technician Actions */}
+                    {role === "TECHNICIAN" &&
+                      (appointment.status === "PENDING" ||
+                        appointment.status === "ASSIGNED" ||
+                        appointment.status === "IN_PROGRESS") && (
+                        <button
+                          style={{
+                            ...actionButtonStyle,
+                            backgroundColor: "#007bff",
+                            color: "#ffffff",
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.backgroundColor = "#0056b3";
+                            e.currentTarget.style.transform = "scale(1.05)";
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.backgroundColor = "#007bff";
+                            e.currentTarget.style.transform = "scale(1)";
+                          }}
+                          onClick={() => openStatusModal(appointment)}
+                        >
+                          🔄 Update Status
+                        </button>
+                      )}
+
+                    {/* Admin Actions */}
+                    {role === "ADMIN" && (
+                      <>
+                        {appointment.status === "PENDING" && (
+                          <button
+                            style={{
+                              ...actionButtonStyle,
+                              backgroundColor: "#ffc107",
+                              color: "#000000",
+                            }}
+                            onMouseEnter={(e) => {
+                              e.currentTarget.style.backgroundColor = "#e0a800";
+                              e.currentTarget.style.transform = "scale(1.05)";
+                            }}
+                            onMouseLeave={(e) => {
+                              e.currentTarget.style.backgroundColor = "#ffc107";
+                              e.currentTarget.style.transform = "scale(1)";
+                            }}
+                            onClick={() => openAssignModal(appointment)}
+                          >
+                            👤 Assign
+                          </button>
+                        )}
+                      </>
                     )}
                   </td>
                 </tr>
@@ -572,15 +803,15 @@ export default function AppointmentsPage() {
         </div>
       )}
 
-      {/* Create Appointment Modal */}
-      {showCreateModal && (
+      {/* Create Appointment Modal (Customer only) */}
+      {showCreateModal && role === "CUSTOMER" && (
         <div style={modalOverlayStyle} onClick={closeModals}>
           <div style={modalStyle} onClick={(e) => e.stopPropagation()}>
-            <h2 style={modalTitleStyle}>Yeni Randevu Oluştur</h2>
+            <h2 style={modalTitleStyle}>Create New Appointment</h2>
             <form onSubmit={handleCreateAppointment}>
               <div>
                 <label style={labelStyle}>
-                  Cihaz <span style={{ color: "#dc3545" }}>*</span>
+                  Device <span style={{ color: "#dc3545" }}>*</span>
                 </label>
                 <select
                   value={formData.deviceId}
@@ -604,7 +835,7 @@ export default function AppointmentsPage() {
                     e.currentTarget.style.boxShadow = "none";
                   }}
                 >
-                  <option value="">Cihaz Seçiniz</option>
+                  <option value="">Select Device</option>
                   {devices.map((device) => (
                     <option key={device.id} value={device.id}>
                       {device.model} ({device.deviceType})
@@ -615,7 +846,7 @@ export default function AppointmentsPage() {
 
               <div>
                 <label style={labelStyle}>
-                  Tarih <span style={{ color: "#dc3545" }}>*</span>
+                  Date <span style={{ color: "#dc3545" }}>*</span>
                 </label>
                 <input
                   type="date"
@@ -644,7 +875,7 @@ export default function AppointmentsPage() {
 
               <div>
                 <label style={labelStyle}>
-                  Saat <span style={{ color: "#dc3545" }}>*</span>
+                  Time <span style={{ color: "#dc3545" }}>*</span>
                 </label>
                 <input
                   type="time"
@@ -713,7 +944,7 @@ export default function AppointmentsPage() {
                     e.currentTarget.style.transform = "translateY(0)";
                   }}
                 >
-                  İptal
+                  Cancel
                 </button>
                 <button
                   type="submit"
@@ -727,10 +958,190 @@ export default function AppointmentsPage() {
                     e.currentTarget.style.boxShadow = "0 4px 12px rgba(0, 150, 57, 0.25)";
                   }}
                 >
-                  ✓ Oluştur
+                  ✓ Create
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Status Update Modal (Technician) */}
+      {showStatusModal && role === "TECHNICIAN" && selectedAppointment && (
+        <div style={modalOverlayStyle} onClick={closeModals}>
+          <div style={modalStyle} onClick={(e) => e.stopPropagation()}>
+            <h2 style={modalTitleStyle}>Update Appointment Status</h2>
+            <div>
+              <label style={labelStyle}>
+                Status <span style={{ color: "#dc3545" }}>*</span>
+              </label>
+              <select
+                value={selectedStatus}
+                onChange={(e) => setSelectedStatus(e.target.value)}
+                required
+                style={{
+                  ...selectStyle,
+                  ...(selectedStatus && {
+                    borderColor: "#009639",
+                    backgroundColor: "#f0f7f3",
+                  }),
+                }}
+                onFocus={(e) => {
+                  e.currentTarget.style.borderColor = "#009639";
+                  e.currentTarget.style.boxShadow = "0 0 0 3px rgba(0, 150, 57, 0.1)";
+                }}
+                onBlur={(e) => {
+                  e.currentTarget.style.borderColor = "#e9ecef";
+                  e.currentTarget.style.boxShadow = "none";
+                }}
+              >
+                <option value="">Select Status</option>
+                {selectedAppointment.status === "PENDING" && (
+                  <>
+                    <option value="IN_PROGRESS">In Progress</option>
+                    <option value="COMPLETED">Completed</option>
+                  </>
+                )}
+                {selectedAppointment.status === "ASSIGNED" && (
+                  <>
+                    <option value="IN_PROGRESS">In Progress</option>
+                    <option value="COMPLETED">Completed</option>
+                  </>
+                )}
+                {selectedAppointment.status === "IN_PROGRESS" && (
+                  <option value="COMPLETED">Completed</option>
+                )}
+              </select>
+            </div>
+
+            <div
+              style={{
+                display: "flex",
+                gap: "12px",
+                justifyContent: "flex-end",
+                marginTop: "28px",
+              }}
+            >
+              <button
+                type="button"
+                onClick={closeModals}
+                style={{
+                  ...buttonStyle,
+                  backgroundColor: "#6c757d",
+                  boxShadow: "0 4px 12px rgba(108, 117, 125, 0.25)",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = "#5a6268";
+                  e.currentTarget.style.transform = "translateY(-2px)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = "#6c757d";
+                  e.currentTarget.style.transform = "translateY(0)";
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleUpdateStatus}
+                style={buttonStyle}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = "translateY(-2px)";
+                  e.currentTarget.style.boxShadow = "0 6px 16px rgba(0, 150, 57, 0.35)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = "translateY(0)";
+                  e.currentTarget.style.boxShadow = "0 4px 12px rgba(0, 150, 57, 0.25)";
+                }}
+              >
+                ✓ Update
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Assign Technician Modal (Admin) */}
+      {showAssignModal && role === "ADMIN" && selectedAppointment && (
+        <div style={modalOverlayStyle} onClick={closeModals}>
+          <div style={modalStyle} onClick={(e) => e.stopPropagation()}>
+            <h2 style={modalTitleStyle}>Assign Technician</h2>
+            <div>
+              <label style={labelStyle}>
+                Technician <span style={{ color: "#dc3545" }}>*</span>
+              </label>
+              <select
+                value={selectedTechnicianId}
+                onChange={(e) => setSelectedTechnicianId(e.target.value)}
+                required
+                style={{
+                  ...selectStyle,
+                  ...(selectedTechnicianId && {
+                    borderColor: "#009639",
+                    backgroundColor: "#f0f7f3",
+                  }),
+                }}
+                onFocus={(e) => {
+                  e.currentTarget.style.borderColor = "#009639";
+                  e.currentTarget.style.boxShadow = "0 0 0 3px rgba(0, 150, 57, 0.1)";
+                }}
+                onBlur={(e) => {
+                  e.currentTarget.style.borderColor = "#e9ecef";
+                  e.currentTarget.style.boxShadow = "none";
+                }}
+              >
+                <option value="">Select Technician</option>
+                {technicians.map((technician) => (
+                  <option key={technician.id} value={technician.id}>
+                    {technician.name} ({technician.email})
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div
+              style={{
+                display: "flex",
+                gap: "12px",
+                justifyContent: "flex-end",
+                marginTop: "28px",
+              }}
+            >
+              <button
+                type="button"
+                onClick={closeModals}
+                style={{
+                  ...buttonStyle,
+                  backgroundColor: "#6c757d",
+                  boxShadow: "0 4px 12px rgba(108, 117, 125, 0.25)",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = "#5a6268";
+                  e.currentTarget.style.transform = "translateY(-2px)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = "#6c757d";
+                  e.currentTarget.style.transform = "translateY(0)";
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleAssignTechnician}
+                style={buttonStyle}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = "translateY(-2px)";
+                  e.currentTarget.style.boxShadow = "0 6px 16px rgba(0, 150, 57, 0.35)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = "translateY(0)";
+                  e.currentTarget.style.boxShadow = "0 4px 12px rgba(0, 150, 57, 0.25)";
+                }}
+              >
+                ✓ Assign
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -739,7 +1150,7 @@ export default function AppointmentsPage() {
       {showDetailModal && selectedAppointment && (
         <div style={modalOverlayStyle} onClick={closeModals}>
           <div style={modalStyle} onClick={(e) => e.stopPropagation()}>
-            <h2 style={modalTitleStyle}>Randevu Detayı</h2>
+            <h2 style={modalTitleStyle}>Appointment Detail</h2>
             <div style={{ marginBottom: "24px" }}>
               <div
                 style={{
@@ -759,7 +1170,7 @@ export default function AppointmentsPage() {
                       letterSpacing: "0.5px",
                     }}
                   >
-                    Randevu ID
+                    Appointment ID
                   </span>
                   <div style={{ fontSize: "18px", fontWeight: "700", color: "#009639" }}>
                     #{selectedAppointment.id}
@@ -776,7 +1187,7 @@ export default function AppointmentsPage() {
                       letterSpacing: "0.5px",
                     }}
                   >
-                    Durum
+                    Status
                   </span>
                   <div style={{ marginTop: "6px" }}>
                     <span style={getStatusBadgeStyle(selectedAppointment.status)}>
@@ -785,6 +1196,25 @@ export default function AppointmentsPage() {
                   </div>
                 </div>
               </div>
+
+              {role === "ADMIN" && selectedAppointment.customerName && (
+                <div style={{ marginBottom: "16px" }}>
+                  <span
+                    style={{
+                      fontSize: "12px",
+                      color: "#6c757d",
+                      fontWeight: "600",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.5px",
+                    }}
+                  >
+                    Customer
+                  </span>
+                  <div style={{ marginTop: "8px", fontSize: "15px", fontWeight: "500" }}>
+                    {selectedAppointment.customerName}
+                  </div>
+                </div>
+              )}
 
               <div style={{ marginBottom: "16px" }}>
                 <span
@@ -796,7 +1226,7 @@ export default function AppointmentsPage() {
                     letterSpacing: "0.5px",
                   }}
                 >
-                  Cihaz Bilgileri
+                  Device Information
                 </span>
                 <div
                   style={{
@@ -825,7 +1255,7 @@ export default function AppointmentsPage() {
                     letterSpacing: "0.5px",
                   }}
                 >
-                  Tarih ve Saat
+                  Date and Time
                 </span>
                 <div style={{ marginTop: "8px", fontSize: "15px", fontWeight: "500" }}>
                   {formatDate(selectedAppointment.date)} - {formatTime(selectedAppointment.time)}
@@ -843,7 +1273,7 @@ export default function AppointmentsPage() {
                       letterSpacing: "0.5px",
                     }}
                   >
-                    Atanan Teknisyen
+                    Assigned Technician
                   </span>
                   <div style={{ marginTop: "8px", fontSize: "15px", fontWeight: "500" }}>
                     {selectedAppointment.technicianName}
@@ -862,17 +1292,17 @@ export default function AppointmentsPage() {
                       letterSpacing: "0.5px",
                     }}
                   >
-                    Oluşturulma Tarihi
+                    Created Date
                   </span>
                   <div style={{ marginTop: "8px", fontSize: "13px", color: "#6c757d" }}>
-                    {new Date(selectedAppointment.createdAt).toLocaleString("tr-TR")}
+                    {new Date(selectedAppointment.createdAt).toLocaleString("en-US")}
                   </div>
                 </div>
               )}
             </div>
 
             <div style={{ display: "flex", gap: "12px", justifyContent: "flex-end" }}>
-              {selectedAppointment.status === "PENDING" && (
+              {role === "CUSTOMER" && selectedAppointment.status === "PENDING" && (
                 <button
                   type="button"
                   onClick={() => handleCancelAppointment(selectedAppointment.id)}
@@ -890,7 +1320,7 @@ export default function AppointmentsPage() {
                     e.currentTarget.style.transform = "translateY(0)";
                   }}
                 >
-                  🗑️ İptal Et
+                  🗑️ Cancel
                 </button>
               )}
               <button
@@ -910,7 +1340,7 @@ export default function AppointmentsPage() {
                   e.currentTarget.style.transform = "translateY(0)";
                 }}
               >
-                Kapat
+                Close
               </button>
             </div>
           </div>

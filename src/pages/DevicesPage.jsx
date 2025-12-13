@@ -18,15 +18,15 @@ export default function DevicesPage() {
 
   // Device type list - Baymak products
   const deviceTypes = [
-    "Klima",
-    "Kombi",
-    "Termosifon",
-    "Şofben",
-    "Isıtıcı",
-    "Güneş Enerjisi",
-    "Pompa",
-    "Termostat",
-    "Havalandırma",
+    "Air Conditioner",
+    "Combi Boiler",
+    "Water Heater",
+    "Instant Water Heater",
+    "Heater",
+    "Solar Energy",
+    "Pump",
+    "Thermostat",
+    "Ventilation",
   ];
 
   useEffect(() => {
@@ -43,7 +43,7 @@ export default function DevicesPage() {
       .catch((err) => {
         console.error("Devices fetch error:", err);
         const errorMsg =
-          err.response?.data?.message || "Cihazlar yüklenirken bir hata oluştu.";
+          err.response?.data?.message || "An error occurred while loading devices.";
         setError(errorMsg);
         setDevices([]); // Set empty array in case of error
       });
@@ -61,7 +61,7 @@ export default function DevicesPage() {
 
     // Validation: Required fields
     if (!formData.deviceType || !formData.model) {
-      setError("Lütfen tüm zorunlu alanları doldurun (Cihaz Tipi, Model).");
+      setError("Please fill in all required fields (Device Type, Model).");
       return;
     }
 
@@ -80,7 +80,7 @@ export default function DevicesPage() {
     } catch (err) {
       console.error(err);
       const errorMsg =
-        err.response?.data?.message || "Cihaz eklenirken bir hata oluştu.";
+        err.response?.data?.message || "An error occurred while adding the device.";
       setError(errorMsg);
     }
   };
@@ -105,13 +105,13 @@ export default function DevicesPage() {
     } catch (err) {
       console.error(err);
       const errorMsg =
-        err.response?.data?.message || "Cihaz güncellenirken bir hata oluştu.";
+        err.response?.data?.message || "An error occurred while updating the device.";
       setError(errorMsg);
     }
   };
 
   const handleDeleteDevice = async (id) => {
-    if (!window.confirm("Bu cihazı silmek istediğinize emin misiniz?")) {
+    if (!window.confirm("Are you sure you want to delete this device?")) {
       return;
     }
 
@@ -120,7 +120,7 @@ export default function DevicesPage() {
       fetchDevices();
     } catch (err) {
       console.error(err);
-      setError("Cihaz silinirken bir hata oluştu.");
+      setError("An error occurred while deleting the device.");
     }
   };
 
@@ -308,8 +308,8 @@ export default function DevicesPage() {
         <div style={headerStyle}>
           <img src="/baymak.png" alt="Baymak Logo" style={logoStyle} />
           <div style={{ flex: 1 }}>
-            <h1 style={titleStyle}>Cihazlarım</h1>
-            <p style={{ color: "#6c757d", margin: "8px 0 0 0" }}>Yükleniyor...</p>
+            <h1 style={titleStyle}>My Devices</h1>
+            <p style={{ color: "#6c757d", margin: "8px 0 0 0" }}>Loading...</p>
           </div>
         </div>
       </div>
@@ -323,9 +323,9 @@ export default function DevicesPage() {
         <img src="/baymak.png" alt="Baymak Logo" style={logoStyle} />
         <div style={titleSectionStyle}>
           <div>
-            <h1 style={titleStyle}>Cihazlarım</h1>
+            <h1 style={titleStyle}>My Devices</h1>
             <p style={{ color: "#6c757d", margin: "8px 0 0 0", fontSize: "15px" }}>
-              {devices.length} {devices.length === 1 ? "cihaz" : "cihaz"} kayıtlı
+              {devices.length} {devices.length === 1 ? "device" : "devices"} registered
             </p>
           </div>
           <button
@@ -342,7 +342,7 @@ export default function DevicesPage() {
             }}
             onClick={() => setShowAddModal(true)}
           >
-            <span style={{ fontSize: "18px" }}>+</span> Yeni Cihaz Ekle
+            <span style={{ fontSize: "18px" }}>+</span> Add New Device
           </button>
         </div>
       </div>
@@ -376,10 +376,10 @@ export default function DevicesPage() {
         >
           <div style={{ fontSize: "64px", marginBottom: "16px" }}>📱</div>
           <p style={{ color: "#6c757d", fontSize: "16px", margin: "8px 0" }}>
-            Henüz cihaz eklenmemiş.
+            No devices added yet.
           </p>
           <p style={{ color: "#adb5bd", fontSize: "14px", margin: "4px 0 0 0" }}>
-            İlk cihazınızı eklemek için yukarıdaki butona tıklayın.
+            Click the button above to add your first device.
           </p>
         </div>
       ) : (
@@ -388,11 +388,11 @@ export default function DevicesPage() {
           <thead>
             <tr>
               <th style={thStyle}>ID</th>
-              <th style={thStyle}>Cihaz Tipi</th>
+              <th style={thStyle}>Device Type</th>
               <th style={thStyle}>Model</th>
-              <th style={thStyle}>Seri No</th>
-              <th style={thStyle}>Eklenme Tarihi</th>
-              <th style={thStyle}>İşlemler</th>
+              <th style={thStyle}>Serial No</th>
+              <th style={thStyle}>Created Date</th>
+              <th style={thStyle}>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -466,7 +466,7 @@ export default function DevicesPage() {
                     }}
                     onClick={() => openEditModal(device)}
                   >
-                    ✏️ Düzenle
+                    ✏️ Edit
                   </button>
                   <button
                     style={{
@@ -484,7 +484,7 @@ export default function DevicesPage() {
                     }}
                     onClick={() => handleDeleteDevice(device.id)}
                   >
-                    🗑️ Sil
+                    🗑️ Delete
                   </button>
                 </td>
               </tr>
@@ -498,11 +498,11 @@ export default function DevicesPage() {
       {showAddModal && (
         <div style={modalOverlayStyle} onClick={closeModals}>
           <div style={modalStyle} onClick={(e) => e.stopPropagation()}>
-            <h2 style={modalTitleStyle}>Yeni Cihaz Ekle</h2>
+            <h2 style={modalTitleStyle}>Add New Device</h2>
             <form onSubmit={handleAddDevice}>
               <div>
                 <label style={labelStyle}>
-                  Marka
+                  Brand
                 </label>
                 <input
                   type="text"
@@ -543,7 +543,7 @@ export default function DevicesPage() {
                     e.currentTarget.style.boxShadow = "none";
                   }}
                 >
-                  <option value="">Cihaz Tipi Seçiniz</option>
+                  <option value="">Select Device Type</option>
                   {deviceTypes.map((type) => (
                     <option key={type} value={type}>
                       {type}
@@ -575,13 +575,13 @@ export default function DevicesPage() {
                     e.currentTarget.style.borderColor = "#e9ecef";
                     e.currentTarget.style.boxShadow = "none";
                   }}
-                  placeholder="Örn: Elegant Plus, Duo, Comfort..."
+                  placeholder="e.g., Elegant Plus, Duo, Comfort..."
                 />
               </div>
 
               <div>
                 <label style={labelStyle}>
-                  Seri Numarası <span style={{ color: "#6c757d", fontSize: "12px", fontWeight: "400" }}>(Opsiyonel)</span>
+                  Serial Number <span style={{ color: "#6c757d", fontSize: "12px", fontWeight: "400" }}>(Optional)</span>
                 </label>
                 <input
                   type="text"
@@ -598,7 +598,7 @@ export default function DevicesPage() {
                     e.currentTarget.style.borderColor = "#e9ecef";
                     e.currentTarget.style.boxShadow = "none";
                   }}
-                  placeholder="Cihaz seri numarası"
+                  placeholder="Device serial number"
                 />
               </div>
 
@@ -638,7 +638,7 @@ export default function DevicesPage() {
                     e.currentTarget.style.transform = "translateY(0)";
                   }}
                 >
-                  İptal
+                  Cancel
                 </button>
                 <button 
                   type="submit" 
@@ -652,7 +652,7 @@ export default function DevicesPage() {
                     e.currentTarget.style.boxShadow = "0 4px 12px rgba(0, 150, 57, 0.25)";
                   }}
                 >
-                  ✓ Kaydet
+                  ✓ Save
                 </button>
               </div>
             </form>
@@ -664,11 +664,11 @@ export default function DevicesPage() {
       {showEditModal && (
         <div style={modalOverlayStyle} onClick={closeModals}>
           <div style={modalStyle} onClick={(e) => e.stopPropagation()}>
-            <h2 style={modalTitleStyle}>Cihaz Düzenle</h2>
+            <h2 style={modalTitleStyle}>Edit Device</h2>
             <form onSubmit={handleEditDevice}>
               <div>
                 <label style={labelStyle}>
-                  Marka
+                  Brand
                 </label>
                 <input
                   type="text"
@@ -709,7 +709,7 @@ export default function DevicesPage() {
                     e.currentTarget.style.boxShadow = "none";
                   }}
                 >
-                  <option value="">Cihaz Tipi Seçiniz</option>
+                  <option value="">Select Device Type</option>
                   {deviceTypes.map((type) => (
                     <option key={type} value={type}>
                       {type}
@@ -741,13 +741,13 @@ export default function DevicesPage() {
                     e.currentTarget.style.borderColor = "#e9ecef";
                     e.currentTarget.style.boxShadow = "none";
                   }}
-                  placeholder="Model bilgisi"
+                  placeholder="Model information"
                 />
               </div>
 
               <div>
                 <label style={labelStyle}>
-                  Seri Numarası <span style={{ color: "#6c757d", fontSize: "12px", fontWeight: "400" }}>(Opsiyonel)</span>
+                  Serial Number <span style={{ color: "#6c757d", fontSize: "12px", fontWeight: "400" }}>(Optional)</span>
                 </label>
                 <input
                   type="text"
@@ -764,7 +764,7 @@ export default function DevicesPage() {
                     e.currentTarget.style.borderColor = "#e9ecef";
                     e.currentTarget.style.boxShadow = "none";
                   }}
-                  placeholder="Cihaz seri numarası"
+                  placeholder="Device serial number"
                 />
               </div>
 
@@ -786,7 +786,7 @@ export default function DevicesPage() {
                     e.currentTarget.style.transform = "translateY(0)";
                   }}
                 >
-                  İptal
+                  Cancel
                 </button>
                 <button 
                   type="submit" 
@@ -800,7 +800,7 @@ export default function DevicesPage() {
                     e.currentTarget.style.boxShadow = "0 4px 12px rgba(0, 150, 57, 0.25)";
                   }}
                 >
-                  ✓ Güncelle
+                  ✓ Update
                 </button>
               </div>
             </form>

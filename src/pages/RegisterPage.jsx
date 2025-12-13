@@ -22,7 +22,7 @@ export default function RegisterPage() {
     setError("");
     try {
       // Registration process
-      await axiosClient.post("/api/auth/register", form);
+      const registerRes = await axiosClient.post("/api/auth/register", form);
       
       // Registration successful, now perform automatic login
       try {
@@ -34,6 +34,18 @@ export default function RegisterPage() {
         localStorage.setItem("token", loginRes.data.token);
         localStorage.setItem("role", loginRes.data.role);
         localStorage.setItem("email", loginRes.data.email);
+        
+        // Store user info in localStorage for profile page
+        const userInfo = {
+          id: registerRes.data.id,
+          name: registerRes.data.name,
+          email: registerRes.data.email,
+          phone: registerRes.data.phone,
+          address: registerRes.data.address,
+          role: registerRes.data.role,
+        };
+        localStorage.setItem("userInfo", JSON.stringify(userInfo));
+        
         navigate("/");
       } catch (loginErr) {
         // Registration successful but login failed - redirect to login page
@@ -72,13 +84,13 @@ export default function RegisterPage() {
                 if (match) {
                   const field = match[1];
                   const message = match[2];
-                  // Translate field names to Turkish (for user display)
+                  // Translate field names to English (for user display)
                   const fieldNames = {
-                    name: "İsim",
+                    name: "Name",
                     email: "Email",
-                    phone: "Telefon",
-                    address: "Adres",
-                    password: "Şifre",
+                    phone: "Phone",
+                    address: "Address",
+                    password: "Password",
                   };
                   return `${fieldNames[field] || field}: ${message}`;
                 }
@@ -88,7 +100,7 @@ export default function RegisterPage() {
             errorMessage = fieldErrors || backendMessage;
           } else if (backendMessage.includes("already exists")) {
             // Email already registered error
-            errorMessage = "Bu email adresi zaten kayıtlı. Lütfen farklı bir email kullanın.";
+            errorMessage = "This email address is already registered. Please use a different email.";
           } else {
             // Other error messages
             errorMessage = backendMessage;

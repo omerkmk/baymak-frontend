@@ -17,6 +17,20 @@ export default function LoginPage() {
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("role", res.data.role);
       localStorage.setItem("email", res.data.email);
+      
+      // Store user info in localStorage for profile page
+      if (res.data.id) {
+        const userInfo = {
+          id: res.data.id,
+          name: res.data.name || "",
+          email: res.data.email,
+          phone: res.data.phone || "",
+          address: res.data.address || "",
+          role: res.data.role,
+        };
+        localStorage.setItem("userInfo", JSON.stringify(userInfo));
+      }
+      
       navigate("/");
     } catch (err) {
       setError("Invalid email or password");
@@ -168,12 +182,12 @@ export default function LoginPage() {
               fontWeight: 500,
             }}
           >
-            Hesabınız yok mu?{" "}
+            Don't have an account?{" "}
             <Link
               to="/register"
               style={{ color: "#009639", fontWeight: 700, textDecoration: "none" }}
             >
-              Kayıt ol
+              Sign Up
             </Link>
           </div>
         </form>
