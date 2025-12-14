@@ -19,6 +19,7 @@ export default function AppointmentsPage() {
     deviceId: "",
     date: "",
     time: "",
+    problemDescription: "",
   });
 
   useEffect(() => {
@@ -110,11 +111,12 @@ export default function AppointmentsPage() {
         deviceId: parseInt(formData.deviceId),
         date: formData.date,
         time: formData.time,
+        problemDescription: formData.problemDescription || null,
       };
 
       await axiosClient.post("/api/appointments", appointmentData);
       setShowCreateModal(false);
-      setFormData({ deviceId: "", date: "", time: "" });
+      setFormData({ deviceId: "", date: "", time: "", problemDescription: "" });
       fetchAppointments();
     } catch (err) {
       console.error(err);
@@ -244,7 +246,7 @@ export default function AppointmentsPage() {
     setSelectedAppointment(null);
     setSelectedStatus("");
     setSelectedTechnicianId("");
-    setFormData({ deviceId: "", date: "", time: "" });
+    setFormData({ deviceId: "", date: "", time: "", problemDescription: "" });
     setError(null);
   };
 
@@ -901,6 +903,38 @@ export default function AppointmentsPage() {
                 />
               </div>
 
+              <div>
+                <label style={labelStyle}>
+                  Problem Description <span style={{ color: "#6c757d", fontSize: "12px" }}>(Optional)</span>
+                </label>
+                <textarea
+                  value={formData.problemDescription}
+                  onChange={(e) =>
+                    setFormData({ ...formData, problemDescription: e.target.value })
+                  }
+                  placeholder="Describe the problem or issue with your device..."
+                  rows={4}
+                  style={{
+                    ...inputStyle,
+                    minHeight: "100px",
+                    resize: "vertical",
+                    fontFamily: "inherit",
+                    ...(formData.problemDescription && {
+                      borderColor: "#009639",
+                      backgroundColor: "#f0f7f3",
+                    }),
+                  }}
+                  onFocus={(e) => {
+                    e.currentTarget.style.borderColor = "#009639";
+                    e.currentTarget.style.boxShadow = "0 0 0 3px rgba(0, 150, 57, 0.1)";
+                  }}
+                  onBlur={(e) => {
+                    e.currentTarget.style.borderColor = "#e9ecef";
+                    e.currentTarget.style.boxShadow = "none";
+                  }}
+                />
+              </div>
+
               {error && (
                 <div
                   style={{
@@ -1277,6 +1311,36 @@ export default function AppointmentsPage() {
                   </span>
                   <div style={{ marginTop: "8px", fontSize: "15px", fontWeight: "500" }}>
                     {selectedAppointment.technicianName}
+                  </div>
+                </div>
+              )}
+
+              {selectedAppointment.problemDescription && (
+                <div style={{ marginBottom: "16px" }}>
+                  <span
+                    style={{
+                      fontSize: "12px",
+                      color: "#6c757d",
+                      fontWeight: "600",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.5px",
+                    }}
+                  >
+                    Problem Description
+                  </span>
+                  <div
+                    style={{
+                      marginTop: "8px",
+                      padding: "12px",
+                      backgroundColor: "#fff3cd",
+                      borderRadius: "8px",
+                      fontSize: "14px",
+                      color: "#856404",
+                      whiteSpace: "pre-wrap",
+                      lineHeight: "1.6",
+                    }}
+                  >
+                    {selectedAppointment.problemDescription}
                   </div>
                 </div>
               )}

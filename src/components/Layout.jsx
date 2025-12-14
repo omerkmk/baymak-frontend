@@ -104,17 +104,35 @@ export default function Layout() {
               marginBottom: "8px",
             }}
           >
-            <img
-              src="/baymak.png"
-              alt="Baymak Logo"
+            <div
               style={{
-                width: "48px",
-                height: "48px",
-                objectFit: "contain",
-                filter: "brightness(0) invert(1)",
-                userSelect: "none",
+                width: "56px",
+                height: "56px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                backgroundColor: "rgba(255, 255, 255, 0.95)",
+                borderRadius: "12px",
+                padding: "6px",
+                border: "1px solid rgba(255, 255, 255, 0.3)",
+                boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
               }}
-            />
+            >
+              <img
+                src="/baymak.png"
+                alt="Baymak Logo"
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "contain",
+                  userSelect: "none",
+                }}
+                onError={(e) => {
+                  console.error("Logo failed to load");
+                  e.target.style.display = "none";
+                }}
+              />
+            </div>
             <div>
               <h2
                 style={{

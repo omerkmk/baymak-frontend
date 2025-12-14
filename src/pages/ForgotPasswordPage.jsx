@@ -2,38 +2,46 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import axiosClient from "../api/axiosClient";
 
-export default function LoginPage() {
+export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setSuccess(false);
+
+    // Validation
+    if (!email || !newPassword || !confirmPassword) {
+      setError("Please fill in all fields.");
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      setError("Passwords do not match.");
+      return;
+    }
+
+    if (newPassword.length < 6) {
+      setError("Password must be at least 6 characters long.");
+      return;
+    }
 
     try {
-      const res = await axiosClient.post("/api/auth/login", { email, password });
-      localStorage.setItem("token", res.data.token);
-      localStorage.setItem("role", res.data.role);
-      localStorage.setItem("email", res.data.email);
-      
-      // Store user info in localStorage for profile page
-      if (res.data.id) {
-        const userInfo = {
-          id: res.data.id,
-          name: res.data.name || "",
-          email: res.data.email,
-          phone: res.data.phone || "",
-          address: res.data.address || "",
-          role: res.data.role,
-        };
-        localStorage.setItem("userInfo", JSON.stringify(userInfo));
-      }
-      
-      navigate("/");
+      await axiosClient.post("/api/auth/reset-password", {
+        email,
+        newPassword,
+      });
+      setSuccess(true);
+      setTimeout(() => {
+        navigate("/login");
+      }, 2000);
     } catch (err) {
-      setError("Invalid email or password");
+      setError(err.response?.data?.message || "An error occurred while resetting password.");
     }
   };
 
@@ -110,6 +118,23 @@ export default function LoginPage() {
     transition: "0.2s ease",
   };
 
+  if (success) {
+    return (
+      <div style={pageStyle}>
+        <div style={cardStyle}>
+          <div style={headerStyle}>
+            <div style={{ fontSize: "64px", marginBottom: "20px" }}>✓</div>
+            <h1 style={titleStyle}>Password Reset Successful!</h1>
+            <p style={subtitleStyle}>Your password has been reset successfully.</p>
+            <p style={{ ...subtitleStyle, marginTop: "8px", color: "#009639" }}>
+              Redirecting to login page...
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div style={pageStyle}>
       <div style={cardStyle}>
@@ -119,8 +144,8 @@ export default function LoginPage() {
             alt="Baymak Logo"
             style={{ width: "200px", marginBottom: "18px", userSelect: "none" }}
           />
-          <h1 style={titleStyle}>Baymak Service Panel</h1>
-          <p style={subtitleStyle}>Please sign in to continue</p>
+          <h1 style={titleStyle}>Reset Password</h1>
+          <p style={subtitleStyle}>Enter your email and new password</p>
         </div>
 
         <form onSubmit={handleSubmit}>
@@ -132,46 +157,43 @@ export default function LoginPage() {
               onChange={(e) => setEmail(e.target.value)}
               required
               style={inputBase}
+              placeholder="Enter your email"
             />
           </div>
 
           <div style={{ marginBottom: "20px" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
-              <label style={labelBase}>Password</label>
-              <Link
-                to="/forgot-password"
-                style={{
-                  fontSize: "13px",
-                  color: "#009639",
-                  fontWeight: 600,
-                  textDecoration: "none",
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.textDecoration = "underline")}
-                onMouseLeave={(e) => (e.currentTarget.style.textDecoration = "none")}
-              >
-                Forgot Password?
-              </Link>
-            </div>
+            <label style={labelBase}>New Password</label>
             <input
               type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
               required
               style={inputBase}
+              placeholder="Enter new password (min 6 characters)"
+              minLength={6}
+            />
+          </div>
+
+          <div style={{ marginBottom: "20px" }}>
+            <label style={labelBase}>Confirm New Password</label>
+            <input
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              required
+              style={inputBase}
+              placeholder="Confirm new password"
+              minLength={6}
             />
           </div>
 
           <button
             type="submit"
             style={buttonStyle}
-            onMouseEnter={(e) =>
-              (e.currentTarget.style.backgroundColor = "#007c30")
-            }
-            onMouseLeave={(e) =>
-              (e.currentTarget.style.backgroundColor = "#009639")
-            }
+            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#007c30")}
+            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#009639")}
           >
-            Sign In
+            Reset Password
           </button>
 
           {error && (
@@ -197,12 +219,12 @@ export default function LoginPage() {
               fontWeight: 500,
             }}
           >
-            Don't have an account?{" "}
+            Remember your password?{" "}
             <Link
-              to="/register"
+              to="/login"
               style={{ color: "#009639", fontWeight: 700, textDecoration: "none" }}
             >
-              Sign Up
+              Sign In
             </Link>
           </div>
         </form>
