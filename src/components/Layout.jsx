@@ -12,6 +12,7 @@ export default function Layout() {
   { path: "/users", label: "Users" },
   { path: "/technicians", label: "Technicians" },
     { path: "/appointments", label: "All Appointments" },
+    { path: "/reports", label: "Service Reports" },
     { path: "/profile", label: "My Profile" },
   ];
 

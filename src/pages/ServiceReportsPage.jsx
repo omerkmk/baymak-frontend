@@ -2,6 +2,10 @@ import { useState, useEffect } from "react";
 import axiosClient from "../api/axiosClient";
 
 export default function ServiceReportsPage() {
+  const role = localStorage.getItem("role");
+  const isAdmin = role === "ADMIN";
+  const isTechnician = role === "TECHNICIAN";
+
   const [reports, setReports] = useState(null);
   const [appointments, setAppointments] = useState([]);
   const [error, setError] = useState(null);
@@ -17,13 +21,18 @@ export default function ServiceReportsPage() {
 
   useEffect(() => {
     fetchReports();
-    fetchAvailableAppointments();
-  }, []);
+    // Only fetch appointments for technicians (they need to create reports)
+    if (isTechnician) {
+      fetchAvailableAppointments();
+    }
+  }, [isTechnician]);
 
   const fetchReports = () => {
     setError(null);
+    // Admin fetches all reports, Technician fetches their own reports
+    const endpoint = isAdmin ? "/api/service-reports/all" : "/api/service-reports/my";
     axiosClient
-      .get("/api/service-reports/my")
+      .get(endpoint)
       .then((res) => {
         setReports(res.data || []);
       })
@@ -332,25 +341,29 @@ export default function ServiceReportsPage() {
           <div>
             <h1 style={titleStyle}>Service Reports</h1>
             <p style={{ color: "#6c757d", margin: "8px 0 0 0", fontSize: "15px" }}>
-              {reports.length} {reports.length === 1 ? "report" : "reports"} created
+              {isAdmin 
+                ? `${reports.length} ${reports.length === 1 ? "report" : "reports"} total`
+                : `${reports.length} ${reports.length === 1 ? "report" : "reports"} created`}
             </p>
           </div>
-          <button
-            style={buttonStyle}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = "#007c30";
-              e.currentTarget.style.transform = "translateY(-2px)";
-              e.currentTarget.style.boxShadow = "0 6px 16px rgba(0, 150, 57, 0.35)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = "#009639";
-              e.currentTarget.style.transform = "translateY(0)";
-              e.currentTarget.style.boxShadow = "0 4px 12px rgba(0, 150, 57, 0.25)";
-            }}
-            onClick={openCreateModal}
-          >
-            <span style={{ fontSize: "18px" }}>+</span> Create New Report
-          </button>
+          {isTechnician && (
+            <button
+              style={buttonStyle}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = "#007c30";
+                e.currentTarget.style.transform = "translateY(-2px)";
+                e.currentTarget.style.boxShadow = "0 6px 16px rgba(0, 150, 57, 0.35)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = "#009639";
+                e.currentTarget.style.transform = "translateY(0)";
+                e.currentTarget.style.boxShadow = "0 4px 12px rgba(0, 150, 57, 0.25)";
+              }}
+              onClick={openCreateModal}
+            >
+              <span style={{ fontSize: "18px" }}>+</span> Create New Report
+            </button>
+          )}
         </div>
       </div>
 
@@ -396,6 +409,7 @@ export default function ServiceReportsPage() {
               <tr>
                 <th style={thStyle}>ID</th>
                 <th style={thStyle}>Appointment ID</th>
+                {isAdmin && <th style={thStyle}>Technician</th>}
                 <th style={thStyle}>Description</th>
                 <th style={thStyle}>Parts Used</th>
                 <th style={thStyle}>Price</th>
@@ -441,6 +455,13 @@ export default function ServiceReportsPage() {
                       #{report.appointmentId}
                     </span>
                   </td>
+                  {isAdmin && (
+                    <td style={tdStyle}>
+                      <span style={{ color: "#495057", fontSize: "13px" }}>
+                        {report.technicianName || "-"}
+                      </span>
+                    </td>
+                  )}
                   <td style={tdStyle}>
                     <span
                       style={{
@@ -885,4 +906,6 @@ export default function ServiceReportsPage() {
     </div>
   );
 }
+
+
 

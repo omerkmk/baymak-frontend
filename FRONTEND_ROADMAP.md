@@ -282,3 +282,5 @@ Eğer ihtiyaç varsa eklenebilir.
 - Backend endpoint'leri hazır, sadece frontend entegrasyonu yapılacak
 - Responsive design önemli (mobile-first yaklaşım önerilir)
 
+
+
