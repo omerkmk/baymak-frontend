@@ -9,6 +9,7 @@ export default function RegisterPage() {
     phone: "",
     address: "",
     password: "",
+    confirmPassword: "",
   });
   const [error, setError] = useState("");
   const navigate = useNavigate();
@@ -20,9 +21,23 @@ export default function RegisterPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    
+    // Validate password match
+    if (form.password !== form.confirmPassword) {
+      setError("Passwords do not match. Please try again.");
+      return;
+    }
+    
+    // Validate password length
+    if (form.password.length < 6) {
+      setError("Password must be at least 6 characters long.");
+      return;
+    }
+    
     try {
-      // Registration process
-      const registerRes = await axiosClient.post("/api/auth/register", form);
+      // Registration process - only send password, not confirmPassword
+      const { confirmPassword, ...registerData } = form;
+      const registerRes = await axiosClient.post("/api/auth/register", registerData);
       
       // Registration successful, now perform automatic login
       try {
@@ -250,8 +265,61 @@ export default function RegisterPage() {
               value={form.password}
               onChange={handleChange("password")}
               required
-              style={inputBase}
+              minLength={6}
+              style={{
+                ...inputBase,
+                ...(form.password && form.confirmPassword && form.password !== form.confirmPassword && {
+                  borderColor: "#b91c1c",
+                  backgroundColor: "#fee2e2",
+                }),
+                ...(form.password && form.confirmPassword && form.password === form.confirmPassword && {
+                  borderColor: "#009639",
+                  backgroundColor: "#f0f7f3",
+                }),
+              }}
             />
+          </div>
+
+          <div style={{ marginBottom: "16px" }}>
+            <label style={labelBase}>Confirm Password</label>
+            <input
+              type="password"
+              value={form.confirmPassword}
+              onChange={handleChange("confirmPassword")}
+              required
+              minLength={6}
+              style={{
+                ...inputBase,
+                ...(form.password && form.confirmPassword && form.password !== form.confirmPassword && {
+                  borderColor: "#b91c1c",
+                  backgroundColor: "#fee2e2",
+                }),
+                ...(form.password && form.confirmPassword && form.password === form.confirmPassword && {
+                  borderColor: "#009639",
+                  backgroundColor: "#f0f7f3",
+                }),
+              }}
+            />
+            {form.password && form.confirmPassword && form.password !== form.confirmPassword && (
+              <div style={{
+                marginTop: "6px",
+                fontSize: "12px",
+                color: "#b91c1c",
+                fontWeight: 500,
+              }}>
+                Passwords do not match
+              </div>
+            )}
+            {form.password && form.confirmPassword && form.password === form.confirmPassword && (
+              <div style={{
+                marginTop: "6px",
+                fontSize: "12px",
+                color: "#009639",
+                fontWeight: 500,
+              }}>
+                Passwords match ✓
+              </div>
+            )}
           </div>
 
           <button
