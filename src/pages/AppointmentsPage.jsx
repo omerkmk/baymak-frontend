@@ -1232,7 +1232,7 @@ export default function AppointmentsPage() {
               </div>
 
               {role === "ADMIN" && selectedAppointment.customerName && (
-                <div style={{ marginBottom: "16px" }}>
+                <div style={{ marginBottom: "20px" }}>
                   <span
                     style={{
                       fontSize: "12px",
@@ -1240,12 +1240,94 @@ export default function AppointmentsPage() {
                       fontWeight: "600",
                       textTransform: "uppercase",
                       letterSpacing: "0.5px",
+                      display: "block",
+                      marginBottom: "12px",
                     }}
                   >
-                    Customer
+                    Customer Information
                   </span>
-                  <div style={{ marginTop: "8px", fontSize: "15px", fontWeight: "500" }}>
-                    {selectedAppointment.customerName}
+                  <div
+                    style={{
+                      padding: "16px",
+                      backgroundColor: "#e7f3ff",
+                      borderRadius: "12px",
+                      border: "1px solid #b8daff",
+                    }}
+                  >
+                    <div style={{ marginBottom: "12px" }}>
+                      <div
+                        style={{
+                          fontSize: "11px",
+                          color: "#6c757d",
+                          fontWeight: "600",
+                          textTransform: "uppercase",
+                          letterSpacing: "0.5px",
+                          marginBottom: "4px",
+                        }}
+                      >
+                        Name
+                      </div>
+                      <div style={{ fontSize: "16px", fontWeight: "600", color: "#009639" }}>
+                        {selectedAppointment.customerName}
+                      </div>
+                    </div>
+                    {selectedAppointment.customerEmail && (
+                      <div style={{ marginBottom: "12px" }}>
+                        <div
+                          style={{
+                            fontSize: "11px",
+                            color: "#6c757d",
+                            fontWeight: "600",
+                            textTransform: "uppercase",
+                            letterSpacing: "0.5px",
+                            marginBottom: "4px",
+                          }}
+                        >
+                          Email
+                        </div>
+                        <div style={{ fontSize: "14px", color: "#495057" }}>
+                          {selectedAppointment.customerEmail}
+                        </div>
+                      </div>
+                    )}
+                    {selectedAppointment.customerPhone && (
+                      <div style={{ marginBottom: "12px" }}>
+                        <div
+                          style={{
+                            fontSize: "11px",
+                            color: "#6c757d",
+                            fontWeight: "600",
+                            textTransform: "uppercase",
+                            letterSpacing: "0.5px",
+                            marginBottom: "4px",
+                          }}
+                        >
+                          Phone
+                        </div>
+                        <div style={{ fontSize: "14px", color: "#495057", fontFamily: "monospace" }}>
+                          {selectedAppointment.customerPhone}
+                        </div>
+                      </div>
+                    )}
+                    {selectedAppointment.customerAddress && (
+                      <div>
+                        <div
+                          style={{
+                            fontSize: "11px",
+                            color: "#6c757d",
+                            fontWeight: "600",
+                            textTransform: "uppercase",
+                            letterSpacing: "0.5px",
+                            marginBottom: "4px",
+                          }}
+                        >
+                          Address
+                        </div>
+                        <div style={{ fontSize: "14px", color: "#495057", lineHeight: "1.5" }}>
+                          {selectedAppointment.customerAddress}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
