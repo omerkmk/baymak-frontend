@@ -133,19 +133,24 @@ export default function RegisterPage() {
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    background: "linear-gradient(135deg, #F3F4F6, #E5E7EB)",
+    background: "linear-gradient(135deg, #f0fdf4 0%, #dcfce7 25%, #f0f9ff 50%, #e0f2fe 75%, #f0fdf4 100%)",
     padding: "20px",
     boxSizing: "border-box",
+    position: "relative",
+    overflow: "hidden",
   };
 
   const cardStyle = {
     width: "100%",
-    maxWidth: "480px",
-    backgroundColor: "#ffffff",
-    borderRadius: "18px",
-    padding: "40px",
-    boxShadow: "0 16px 40px rgba(0, 0, 0, 0.15)",
+    maxWidth: "520px",
+    backgroundColor: "rgba(255, 255, 255, 0.95)",
+    backdropFilter: "blur(10px)",
+    borderRadius: "24px",
+    padding: "48px",
+    boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(0, 150, 57, 0.1)",
     boxSizing: "border-box",
+    border: "1px solid rgba(255, 255, 255, 0.8)",
+    transition: "all 0.3s ease",
   };
 
   const headerStyle = {
@@ -177,26 +182,30 @@ export default function RegisterPage() {
 
   const inputBase = {
     width: "100%",
-    padding: "12px 14px",
-    borderRadius: "12px",
-    border: "1px solid #D1D5DB",
-    fontSize: "14px",
+    padding: "14px 18px",
+    borderRadius: "14px",
+    border: "2px solid #E5E7EB",
+    fontSize: "15px",
     color: "#111827",
     backgroundColor: "#ffffff",
     outline: "none",
     boxSizing: "border-box",
+    transition: "all 0.2s ease",
   };
 
   const buttonStyle = {
     width: "100%",
-    padding: "14px",
-    backgroundColor: "#009639",
+    padding: "16px 24px",
+    background: "linear-gradient(135deg, #007c30 0%, #009639 50%, #00b347 100%)",
     color: "#ffffff",
     border: "none",
-    borderRadius: "12px",
+    borderRadius: "14px",
     fontSize: "16px",
     fontWeight: 700,
     cursor: "pointer",
+    transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+    boxShadow: "0 4px 6px -1px rgba(0, 150, 57, 0.3), 0 2px 4px -1px rgba(0, 150, 57, 0.2)",
+    letterSpacing: "0.3px",
     transition: "0.2s ease",
   };
 

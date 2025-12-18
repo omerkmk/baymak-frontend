@@ -370,16 +370,42 @@ export default function DevicesPage() {
             textAlign: "center",
             padding: "60px 40px",
             backgroundColor: "#ffffff",
-            borderRadius: "16px",
+            borderRadius: "20px",
             boxShadow: "0 4px 20px rgba(0, 0, 0, 0.08)",
+            background: "linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%)",
           }}
         >
-          <div style={{ fontSize: "64px", marginBottom: "16px" }}>📱</div>
-          <p style={{ color: "#6c757d", fontSize: "16px", margin: "8px 0" }}>
+          <div style={{ 
+            marginBottom: "24px",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}>
+            <img 
+              src="/neden-baymak-klima-tercih-etmelisinizz.png" 
+              alt="Baymak Klima"
+              style={{
+                maxWidth: "200px",
+                height: "auto",
+                opacity: 0.9,
+                filter: "drop-shadow(0 4px 12px rgba(0, 150, 57, 0.25))",
+                borderRadius: "12px",
+              }}
+              onError={(e) => {
+                // Fallback to emoji if image fails to load
+                e.target.style.display = "none";
+                const fallback = document.createElement('div');
+                fallback.style.cssText = 'font-size: 64px; margin-bottom: 16px;';
+                fallback.textContent = '❄️';
+                e.target.parentElement.appendChild(fallback);
+              }}
+            />
+          </div>
+          <p style={{ color: "#1F2937", fontSize: "18px", margin: "8px 0", fontWeight: "600" }}>
             No devices added yet.
           </p>
-          <p style={{ color: "#adb5bd", fontSize: "14px", margin: "4px 0 0 0" }}>
-            Click the button above to add your first device.
+          <p style={{ color: "#6B7280", fontSize: "15px", margin: "8px 0 0 0" }}>
+            Click the button above to add your first Baymak device.
           </p>
         </div>
       ) : (

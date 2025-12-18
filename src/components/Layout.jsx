@@ -213,15 +213,6 @@ export default function Layout() {
                   }
                 }}
               >
-                <span style={{ marginRight: "12px", fontSize: "18px" }}>
-                  {item.path === "/" && "📊"}
-                  {item.path === "/appointments" && "📅"}
-                  {item.path === "/devices" && "📱"}
-                  {item.path === "/users" && "👥"}
-                  {item.path === "/technicians" && "🔧"}
-                  {item.path === "/reports" && "📋"}
-                  {item.path === "/profile" && "👤"}
-                </span>
                 {item.label}
               </Link>
             );
@@ -320,7 +311,7 @@ export default function Layout() {
               e.currentTarget.style.boxShadow = "0 4px 12px rgba(0, 0, 0, 0.15)";
             }}
           >
-            <span style={{ fontSize: "16px" }}>🚪</span> Logout
+Logout
           </button>
         </div>
       </aside>

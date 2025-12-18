@@ -198,49 +198,59 @@ export default function DashboardPage() {
   // Get status badge style
   const getStatusBadgeStyle = (status) => {
     const baseStyle = {
-      display: "inline-block",
-      padding: "4px 12px",
-      borderRadius: "20px",
+      display: "inline-flex",
+      alignItems: "center",
+      gap: "6px",
+      padding: "6px 14px",
+      borderRadius: "12px",
       fontSize: "12px",
-      fontWeight: "600",
+      fontWeight: "700",
+      letterSpacing: "0.3px",
+      boxShadow: "0 1px 2px rgba(0, 0, 0, 0.05)",
     };
 
     switch (status) {
       case "PENDING":
         return {
           ...baseStyle,
-          backgroundColor: "#fff3cd",
-          color: "#856404",
+          backgroundColor: "#FEF3C7",
+          color: "#92400E",
+          border: "1px solid #FDE68A",
         };
       case "ASSIGNED":
         return {
           ...baseStyle,
-          backgroundColor: "#cfe2ff",
-          color: "#084298",
+          backgroundColor: "#DBEAFE",
+          color: "#1E40AF",
+          border: "1px solid #BFDBFE",
         };
       case "IN_PROGRESS":
         return {
           ...baseStyle,
-          backgroundColor: "#cfe2ff",
-          color: "#084298",
+          backgroundColor: "#DBEAFE",
+          color: "#1E40AF",
+          border: "1px solid #BFDBFE",
         };
       case "COMPLETED":
         return {
           ...baseStyle,
-          backgroundColor: "#d1e7dd",
-          color: "#0f5132",
+          backgroundColor: "#D1FAE5",
+          color: "#065F46",
+          border: "1px solid #A7F3D0",
         };
       case "CANCELLED":
         return {
           ...baseStyle,
-          backgroundColor: "#f8d7da",
-          color: "#842029",
+          backgroundColor: "#FEE2E2",
+          color: "#991B1B",
+          border: "1px solid #FECACA",
         };
       default:
         return {
           ...baseStyle,
-          backgroundColor: "#e9ecef",
-          color: "#495057",
+          backgroundColor: "#F3F4F6",
+          color: "#374151",
+          border: "1px solid #E5E7EB",
         };
     }
   };
@@ -267,86 +277,103 @@ export default function DashboardPage() {
   const containerStyle = {
     maxWidth: "1400px",
     margin: "0 auto",
-    padding: "24px",
+    padding: "32px 24px",
+    minHeight: "100vh",
   };
 
   const headerStyle = {
     display: "flex",
     alignItems: "center",
     gap: "20px",
-    marginBottom: "32px",
+    marginBottom: "40px",
+    paddingBottom: "24px",
+    borderBottom: "2px solid #E5E7EB",
   };
 
   const logoStyle = {
-    width: "60px",
-    height: "60px",
+    width: "64px",
+    height: "64px",
     objectFit: "contain",
     userSelect: "none",
+    filter: "drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1))",
   };
 
   const titleStyle = {
-    fontSize: "32px",
-    fontWeight: "700",
-    color: "#1F2937",
+    fontSize: "36px",
+    fontWeight: "800",
+    background: "linear-gradient(135deg, #007c30 0%, #009639 100%)",
+    WebkitBackgroundClip: "text",
+    WebkitTextFillColor: "transparent",
+    backgroundClip: "text",
     margin: 0,
+    letterSpacing: "-0.5px",
   };
 
   // Statistics cards container
   const statsContainerStyle = {
     display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
+    gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
     gap: "24px",
-    marginBottom: "40px",
+    marginBottom: "48px",
   };
 
   const statCardStyle = {
     backgroundColor: "#ffffff",
-    borderRadius: "16px",
-    padding: "28px",
-    boxShadow: "0 4px 20px rgba(0, 0, 0, 0.08)",
-    border: "1px solid #e9ecef",
-    transition: "transform 0.2s ease, box-shadow 0.2s ease",
+    borderRadius: "20px",
+    padding: "32px",
+    boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+    border: "1px solid #F3F4F6",
+    transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+    position: "relative",
+    overflow: "hidden",
   };
 
   const statCardTitleStyle = {
-    fontSize: "14px",
+    fontSize: "13px",
     fontWeight: "600",
-    color: "#6c757d",
-    marginBottom: "12px",
+    color: "#6B7280",
+    marginBottom: "16px",
     textTransform: "uppercase",
-    letterSpacing: "0.5px",
+    letterSpacing: "0.8px",
   };
 
   const statCardValueStyle = {
-    fontSize: "36px",
-    fontWeight: "700",
-    color: "#009639",
+    fontSize: "42px",
+    fontWeight: "800",
+    background: "linear-gradient(135deg, #007c30 0%, #009639 50%, #00b347 100%)",
+    WebkitBackgroundClip: "text",
+    WebkitTextFillColor: "transparent",
+    backgroundClip: "text",
     marginBottom: "8px",
+    lineHeight: "1.1",
   };
 
   // Section styles
   const sectionStyle = {
     backgroundColor: "#ffffff",
-    borderRadius: "16px",
-    padding: "28px",
-    boxShadow: "0 4px 20px rgba(0, 0, 0, 0.08)",
+    borderRadius: "20px",
+    padding: "32px",
+    boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
     marginBottom: "32px",
+    border: "1px solid #F3F4F6",
+    transition: "all 0.3s ease",
   };
 
   const sectionHeaderStyle = {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: "24px",
-    paddingBottom: "16px",
-    borderBottom: "2px solid #e9ecef",
+    marginBottom: "28px",
+    paddingBottom: "20px",
+    borderBottom: "2px solid #F3F4F6",
   };
 
   const sectionTitleStyle = {
-    fontSize: "22px",
+    fontSize: "24px",
     fontWeight: "700",
-    color: "#1F2937",
+    color: "#111827",
     margin: 0,
+    letterSpacing: "-0.3px",
   };
 
   const viewAllLinkStyle = {
@@ -354,31 +381,37 @@ export default function DashboardPage() {
     textDecoration: "none",
     fontWeight: "600",
     fontSize: "14px",
-    transition: "color 0.2s ease",
+    transition: "all 0.2s ease",
+    display: "inline-flex",
+    alignItems: "center",
+    gap: "4px",
   };
 
   // Table styles
   const tableStyle = {
     width: "100%",
-    borderCollapse: "collapse",
+    borderCollapse: "separate",
+    borderSpacing: "0",
   };
 
   const thStyle = {
     textAlign: "left",
-    padding: "12px 16px",
-    fontSize: "13px",
-    fontWeight: "600",
-    color: "#6c757d",
+    padding: "16px 20px",
+    fontSize: "12px",
+    fontWeight: "700",
+    color: "#6B7280",
     textTransform: "uppercase",
-    letterSpacing: "0.5px",
-    borderBottom: "2px solid #e9ecef",
+    letterSpacing: "0.8px",
+    borderBottom: "2px solid #F3F4F6",
+    backgroundColor: "#FAFBFC",
   };
 
   const tdStyle = {
-    padding: "16px",
+    padding: "18px 20px",
     fontSize: "14px",
-    color: "#1F2937",
-    borderBottom: "1px solid #f0f0f0",
+    color: "#111827",
+    borderBottom: "1px solid #F3F4F6",
+    transition: "background-color 0.15s ease",
   };
 
   const emptyStateStyle = {
@@ -438,37 +471,47 @@ export default function DashboardPage() {
         {/* Statistics Cards */}
         <div style={statsContainerStyle}>
           <div
-            style={statCardStyle}
+            style={{
+              ...statCardStyle,
+              background: "linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%)",
+            }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.transform = "translateY(-4px)";
-              e.currentTarget.style.boxShadow = "0 8px 24px rgba(0, 0, 0, 0.12)";
+              e.currentTarget.style.transform = "translateY(-6px) scale(1.02)";
+              e.currentTarget.style.boxShadow = "0 20px 25px -5px rgba(0, 150, 57, 0.15), 0 10px 10px -5px rgba(0, 150, 57, 0.1)";
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.transform = "translateY(0)";
-              e.currentTarget.style.boxShadow = "0 4px 20px rgba(0, 0, 0, 0.08)";
+              e.currentTarget.style.transform = "translateY(0) scale(1)";
+              e.currentTarget.style.boxShadow = "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)";
             }}
           >
-            <div style={statCardTitleStyle}>Total Devices</div>
+            <div style={statCardTitleStyle}>
+              Total Devices
+            </div>
             <div style={statCardValueStyle}>{totalDevices}</div>
-            <div style={{ fontSize: "13px", color: "#6c757d" }}>
+            <div style={{ fontSize: "14px", color: "#6B7280", fontWeight: "500" }}>
               {totalDevices === 1 ? "device" : "devices"} registered
             </div>
           </div>
 
           <div
-            style={statCardStyle}
+            style={{
+              ...statCardStyle,
+              background: "linear-gradient(135deg, #ffffff 0%, #fef3c7 100%)",
+            }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.transform = "translateY(-4px)";
-              e.currentTarget.style.boxShadow = "0 8px 24px rgba(0, 0, 0, 0.12)";
+              e.currentTarget.style.transform = "translateY(-6px) scale(1.02)";
+              e.currentTarget.style.boxShadow = "0 20px 25px -5px rgba(245, 158, 11, 0.15), 0 10px 10px -5px rgba(245, 158, 11, 0.1)";
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.transform = "translateY(0)";
-              e.currentTarget.style.boxShadow = "0 4px 20px rgba(0, 0, 0, 0.08)";
+              e.currentTarget.style.transform = "translateY(0) scale(1)";
+              e.currentTarget.style.boxShadow = "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)";
             }}
           >
-            <div style={statCardTitleStyle}>Active Appointments</div>
+            <div style={statCardTitleStyle}>
+              Active Appointments
+            </div>
             <div style={statCardValueStyle}>{activeAppointments}</div>
-            <div style={{ fontSize: "13px", color: "#6c757d" }}>
+            <div style={{ fontSize: "14px", color: "#6B7280", fontWeight: "500" }}>
               {activeAppointments === 1 ? "appointment" : "appointments"} in progress
             </div>
           </div>
@@ -680,73 +723,93 @@ export default function DashboardPage() {
         {/* Statistics Cards */}
         <div style={statsContainerStyle}>
           <div
-            style={statCardStyle}
+            style={{
+              ...statCardStyle,
+              background: "linear-gradient(135deg, #ffffff 0%, #dbeafe 100%)",
+            }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.transform = "translateY(-4px)";
-              e.currentTarget.style.boxShadow = "0 8px 24px rgba(0, 0, 0, 0.12)";
+              e.currentTarget.style.transform = "translateY(-6px) scale(1.02)";
+              e.currentTarget.style.boxShadow = "0 20px 25px -5px rgba(59, 130, 246, 0.15), 0 10px 10px -5px rgba(59, 130, 246, 0.1)";
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.transform = "translateY(0)";
-              e.currentTarget.style.boxShadow = "0 4px 20px rgba(0, 0, 0, 0.08)";
+              e.currentTarget.style.transform = "translateY(0) scale(1)";
+              e.currentTarget.style.boxShadow = "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)";
             }}
           >
-            <div style={statCardTitleStyle}>Today's Appointments</div>
+            <div style={statCardTitleStyle}>
+              Today's Appointments
+            </div>
             <div style={statCardValueStyle}>{assignedToday}</div>
-            <div style={{ fontSize: "13px", color: "#6c757d" }}>
+            <div style={{ fontSize: "14px", color: "#6B7280", fontWeight: "500" }}>
               {assignedToday === 1 ? "appointment" : "appointments"} scheduled
             </div>
           </div>
 
           <div
-            style={statCardStyle}
+            style={{
+              ...statCardStyle,
+              background: "linear-gradient(135deg, #ffffff 0%, #e0e7ff 100%)",
+            }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.transform = "translateY(-4px)";
-              e.currentTarget.style.boxShadow = "0 8px 24px rgba(0, 0, 0, 0.12)";
+              e.currentTarget.style.transform = "translateY(-6px) scale(1.02)";
+              e.currentTarget.style.boxShadow = "0 20px 25px -5px rgba(99, 102, 241, 0.15), 0 10px 10px -5px rgba(99, 102, 241, 0.1)";
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.transform = "translateY(0)";
-              e.currentTarget.style.boxShadow = "0 4px 20px rgba(0, 0, 0, 0.08)";
+              e.currentTarget.style.transform = "translateY(0) scale(1)";
+              e.currentTarget.style.boxShadow = "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)";
             }}
           >
-            <div style={statCardTitleStyle}>Tomorrow's Appointments</div>
+            <div style={statCardTitleStyle}>
+              Tomorrow's Appointments
+            </div>
             <div style={statCardValueStyle}>{assignedTomorrow}</div>
-            <div style={{ fontSize: "13px", color: "#6c757d" }}>
+            <div style={{ fontSize: "14px", color: "#6B7280", fontWeight: "500" }}>
               {assignedTomorrow === 1 ? "appointment" : "appointments"} scheduled
             </div>
           </div>
 
           <div
-            style={statCardStyle}
+            style={{
+              ...statCardStyle,
+              background: "linear-gradient(135deg, #ffffff 0%, #fef3c7 100%)",
+            }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.transform = "translateY(-4px)";
-              e.currentTarget.style.boxShadow = "0 8px 24px rgba(0, 0, 0, 0.12)";
+              e.currentTarget.style.transform = "translateY(-6px) scale(1.02)";
+              e.currentTarget.style.boxShadow = "0 20px 25px -5px rgba(245, 158, 11, 0.15), 0 10px 10px -5px rgba(245, 158, 11, 0.1)";
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.transform = "translateY(0)";
-              e.currentTarget.style.boxShadow = "0 4px 20px rgba(0, 0, 0, 0.08)";
+              e.currentTarget.style.transform = "translateY(0) scale(1)";
+              e.currentTarget.style.boxShadow = "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)";
             }}
           >
-            <div style={statCardTitleStyle}>Upcoming Appointments</div>
+            <div style={statCardTitleStyle}>
+              Upcoming Appointments
+            </div>
             <div style={statCardValueStyle}>{assignedUpcoming}</div>
-            <div style={{ fontSize: "13px", color: "#6c757d" }}>
+            <div style={{ fontSize: "14px", color: "#6B7280", fontWeight: "500" }}>
               {assignedUpcoming === 1 ? "appointment" : "appointments"} pending
             </div>
           </div>
 
           <div
-            style={statCardStyle}
+            style={{
+              ...statCardStyle,
+              background: "linear-gradient(135deg, #ffffff 0%, #d1fae5 100%)",
+            }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.transform = "translateY(-4px)";
-              e.currentTarget.style.boxShadow = "0 8px 24px rgba(0, 0, 0, 0.12)";
+              e.currentTarget.style.transform = "translateY(-6px) scale(1.02)";
+              e.currentTarget.style.boxShadow = "0 20px 25px -5px rgba(16, 185, 129, 0.15), 0 10px 10px -5px rgba(16, 185, 129, 0.1)";
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.transform = "translateY(0)";
-              e.currentTarget.style.boxShadow = "0 4px 20px rgba(0, 0, 0, 0.08)";
+              e.currentTarget.style.transform = "translateY(0) scale(1)";
+              e.currentTarget.style.boxShadow = "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)";
             }}
           >
-            <div style={statCardTitleStyle}>Completed This Month</div>
+            <div style={statCardTitleStyle}>
+              Completed This Month
+            </div>
             <div style={statCardValueStyle}>{completedThisMonth}</div>
-            <div style={{ fontSize: "13px", color: "#6c757d" }}>
+            <div style={{ fontSize: "14px", color: "#6B7280", fontWeight: "500" }}>
               {completedThisMonth === 1 ? "appointment" : "appointments"} completed
             </div>
           </div>
@@ -937,109 +1000,139 @@ export default function DashboardPage() {
         {/* Statistics Cards */}
         <div style={statsContainerStyle}>
           <div
-            style={statCardStyle}
+            style={{
+              ...statCardStyle,
+              background: "linear-gradient(135deg, #ffffff 0%, #e0e7ff 100%)",
+            }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.transform = "translateY(-4px)";
-              e.currentTarget.style.boxShadow = "0 8px 24px rgba(0, 0, 0, 0.12)";
+              e.currentTarget.style.transform = "translateY(-6px) scale(1.02)";
+              e.currentTarget.style.boxShadow = "0 20px 25px -5px rgba(99, 102, 241, 0.15), 0 10px 10px -5px rgba(99, 102, 241, 0.1)";
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.transform = "translateY(0)";
-              e.currentTarget.style.boxShadow = "0 4px 20px rgba(0, 0, 0, 0.08)";
+              e.currentTarget.style.transform = "translateY(0) scale(1)";
+              e.currentTarget.style.boxShadow = "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)";
             }}
           >
-            <div style={statCardTitleStyle}>Total Users</div>
+            <div style={statCardTitleStyle}>
+              Total Users
+            </div>
             <div style={statCardValueStyle}>{totalUsers}</div>
-            <div style={{ fontSize: "13px", color: "#6c757d" }}>
+            <div style={{ fontSize: "14px", color: "#6B7280", fontWeight: "500" }}>
               {totalUsers === 1 ? "user" : "users"} registered
             </div>
           </div>
 
           <div
-            style={statCardStyle}
+            style={{
+              ...statCardStyle,
+              background: "linear-gradient(135deg, #ffffff 0%, #dbeafe 100%)",
+            }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.transform = "translateY(-4px)";
-              e.currentTarget.style.boxShadow = "0 8px 24px rgba(0, 0, 0, 0.12)";
+              e.currentTarget.style.transform = "translateY(-6px) scale(1.02)";
+              e.currentTarget.style.boxShadow = "0 20px 25px -5px rgba(59, 130, 246, 0.15), 0 10px 10px -5px rgba(59, 130, 246, 0.1)";
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.transform = "translateY(0)";
-              e.currentTarget.style.boxShadow = "0 4px 20px rgba(0, 0, 0, 0.08)";
+              e.currentTarget.style.transform = "translateY(0) scale(1)";
+              e.currentTarget.style.boxShadow = "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)";
             }}
           >
-            <div style={statCardTitleStyle}>Total Technicians</div>
+            <div style={statCardTitleStyle}>
+              Total Technicians
+            </div>
             <div style={statCardValueStyle}>{totalTechnicians}</div>
-            <div style={{ fontSize: "13px", color: "#6c757d" }}>
+            <div style={{ fontSize: "14px", color: "#6B7280", fontWeight: "500" }}>
               {totalTechnicians === 1 ? "technician" : "technicians"} registered
             </div>
           </div>
 
           <div
-            style={statCardStyle}
+            style={{
+              ...statCardStyle,
+              background: "linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%)",
+            }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.transform = "translateY(-4px)";
-              e.currentTarget.style.boxShadow = "0 8px 24px rgba(0, 0, 0, 0.12)";
+              e.currentTarget.style.transform = "translateY(-6px) scale(1.02)";
+              e.currentTarget.style.boxShadow = "0 20px 25px -5px rgba(0, 150, 57, 0.15), 0 10px 10px -5px rgba(0, 150, 57, 0.1)";
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.transform = "translateY(0)";
-              e.currentTarget.style.boxShadow = "0 4px 20px rgba(0, 0, 0, 0.08)";
+              e.currentTarget.style.transform = "translateY(0) scale(1)";
+              e.currentTarget.style.boxShadow = "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)";
             }}
           >
-            <div style={statCardTitleStyle}>Total Appointments</div>
+            <div style={statCardTitleStyle}>
+              Total Appointments
+            </div>
             <div style={statCardValueStyle}>{totalAppointments}</div>
-            <div style={{ fontSize: "13px", color: "#6c757d" }}>
+            <div style={{ fontSize: "14px", color: "#6B7280", fontWeight: "500" }}>
               {totalAppointments === 1 ? "appointment" : "appointments"} total
             </div>
           </div>
 
           <div
-            style={statCardStyle}
+            style={{
+              ...statCardStyle,
+              background: "linear-gradient(135deg, #ffffff 0%, #fef3c7 100%)",
+            }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.transform = "translateY(-4px)";
-              e.currentTarget.style.boxShadow = "0 8px 24px rgba(0, 0, 0, 0.12)";
+              e.currentTarget.style.transform = "translateY(-6px) scale(1.02)";
+              e.currentTarget.style.boxShadow = "0 20px 25px -5px rgba(245, 158, 11, 0.15), 0 10px 10px -5px rgba(245, 158, 11, 0.1)";
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.transform = "translateY(0)";
-              e.currentTarget.style.boxShadow = "0 4px 20px rgba(0, 0, 0, 0.08)";
+              e.currentTarget.style.transform = "translateY(0) scale(1)";
+              e.currentTarget.style.boxShadow = "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)";
             }}
           >
-            <div style={statCardTitleStyle}>Pending Appointments</div>
+            <div style={statCardTitleStyle}>
+              Pending Appointments
+            </div>
             <div style={statCardValueStyle}>{pendingAppointments}</div>
-            <div style={{ fontSize: "13px", color: "#6c757d" }}>
+            <div style={{ fontSize: "14px", color: "#6B7280", fontWeight: "500" }}>
               {pendingAppointments === 1 ? "appointment" : "appointments"} pending
             </div>
           </div>
 
           <div
-            style={statCardStyle}
+            style={{
+              ...statCardStyle,
+              background: "linear-gradient(135deg, #ffffff 0%, #dbeafe 100%)",
+            }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.transform = "translateY(-4px)";
-              e.currentTarget.style.boxShadow = "0 8px 24px rgba(0, 0, 0, 0.12)";
+              e.currentTarget.style.transform = "translateY(-6px) scale(1.02)";
+              e.currentTarget.style.boxShadow = "0 20px 25px -5px rgba(59, 130, 246, 0.15), 0 10px 10px -5px rgba(59, 130, 246, 0.1)";
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.transform = "translateY(0)";
-              e.currentTarget.style.boxShadow = "0 4px 20px rgba(0, 0, 0, 0.08)";
+              e.currentTarget.style.transform = "translateY(0) scale(1)";
+              e.currentTarget.style.boxShadow = "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)";
             }}
           >
-            <div style={statCardTitleStyle}>In Progress</div>
+            <div style={statCardTitleStyle}>
+              In Progress
+            </div>
             <div style={statCardValueStyle}>{inProgressAppointments}</div>
-            <div style={{ fontSize: "13px", color: "#6c757d" }}>
+            <div style={{ fontSize: "14px", color: "#6B7280", fontWeight: "500" }}>
               {inProgressAppointments === 1 ? "appointment" : "appointments"} in progress
             </div>
           </div>
 
           <div
-            style={statCardStyle}
+            style={{
+              ...statCardStyle,
+              background: "linear-gradient(135deg, #ffffff 0%, #d1fae5 100%)",
+            }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.transform = "translateY(-4px)";
-              e.currentTarget.style.boxShadow = "0 8px 24px rgba(0, 0, 0, 0.12)";
+              e.currentTarget.style.transform = "translateY(-6px) scale(1.02)";
+              e.currentTarget.style.boxShadow = "0 20px 25px -5px rgba(16, 185, 129, 0.15), 0 10px 10px -5px rgba(16, 185, 129, 0.1)";
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.transform = "translateY(0)";
-              e.currentTarget.style.boxShadow = "0 4px 20px rgba(0, 0, 0, 0.08)";
+              e.currentTarget.style.transform = "translateY(0) scale(1)";
+              e.currentTarget.style.boxShadow = "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)";
             }}
           >
-            <div style={statCardTitleStyle}>Completed</div>
+            <div style={statCardTitleStyle}>
+              Completed
+            </div>
             <div style={statCardValueStyle}>{completedAppointments}</div>
-            <div style={{ fontSize: "13px", color: "#6c757d" }}>
+            <div style={{ fontSize: "14px", color: "#6B7280", fontWeight: "500" }}>
               {completedAppointments === 1 ? "appointment" : "appointments"} completed
             </div>
           </div>
