@@ -31,7 +31,7 @@ export default function LoginPage() {
         localStorage.setItem("userInfo", JSON.stringify(userInfo));
       }
       
-      navigate("/");
+      navigate("/dashboard");
     } catch (err) {
       setError("Invalid email or password");
     }

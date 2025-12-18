@@ -24,7 +24,7 @@ function App() {
 
       {/* Protected */}
       <Route element={<ProtectedRoute />}>
-        <Route path="/" element={<Layout />}>
+        <Route path="/dashboard" element={<Layout />}>
           <Route index element={<DashboardPage />} />
           <Route path="appointments" element={<AppointmentsPage />} />
           <Route path="devices" element={<DevicesPage />} />

@@ -61,7 +61,7 @@ export default function RegisterPage() {
         };
         localStorage.setItem("userInfo", JSON.stringify(userInfo));
         
-        navigate("/");
+        navigate("/dashboard");
       } catch (loginErr) {
         // Registration successful but login failed - redirect to login page
         setError("Registration successful! Please login with your credentials.");

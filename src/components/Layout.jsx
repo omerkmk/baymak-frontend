@@ -8,26 +8,26 @@ export default function Layout() {
   const userName = userInfo.name || userInfo.email || "User";
 
   const adminMenu = [
-  { path: "/", label: "Dashboard" },
-  { path: "/users", label: "Users" },
-  { path: "/technicians", label: "Technicians" },
-    { path: "/appointments", label: "All Appointments" },
-    { path: "/reports", label: "Service Reports" },
-    { path: "/profile", label: "My Profile" },
+  { path: "/dashboard", label: "Dashboard" },
+  { path: "/dashboard/users", label: "Users" },
+  { path: "/dashboard/technicians", label: "Technicians" },
+    { path: "/dashboard/appointments", label: "All Appointments" },
+    { path: "/dashboard/reports", label: "Service Reports" },
+    { path: "/dashboard/profile", label: "My Profile" },
   ];
 
   const customerMenu = [
-    { path: "/", label: "Dashboard" },
-    { path: "/appointments", label: "My Appointments" },
-    { path: "/devices", label: "My Devices" },
-    { path: "/profile", label: "My Profile" },
+    { path: "/dashboard", label: "Dashboard" },
+    { path: "/dashboard/appointments", label: "My Appointments" },
+    { path: "/dashboard/devices", label: "My Devices" },
+    { path: "/dashboard/profile", label: "My Profile" },
   ];
 
   const technicianMenu = [
-    { path: "/", label: "Dashboard" },
-    { path: "/appointments", label: "Assigned Appointments" },
-    { path: "/reports", label: "Service Reports" },
-  { path: "/profile", label: "My Profile" },
+    { path: "/dashboard", label: "Dashboard" },
+    { path: "/dashboard/appointments", label: "Assigned Appointments" },
+    { path: "/dashboard/reports", label: "Service Reports" },
+  { path: "/dashboard/profile", label: "My Profile" },
 ];
 
   let menuItems =
