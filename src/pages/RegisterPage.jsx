@@ -206,7 +206,6 @@ export default function RegisterPage() {
     transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
     boxShadow: "0 4px 6px -1px rgba(0, 150, 57, 0.3), 0 2px 4px -1px rgba(0, 150, 57, 0.2)",
     letterSpacing: "0.3px",
-    transition: "0.2s ease",
   };
 
   return (
