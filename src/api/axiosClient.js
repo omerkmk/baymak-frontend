@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const axiosClient = axios.create({
-  baseURL: "http://3.238.235.255/api",  // EC2 IP
+  baseURL: "http://3.238.235.255",  // EC2 IP - Nginx handles /api prefix
   headers: {
     "Content-Type": "application/json",
   },
