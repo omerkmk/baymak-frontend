@@ -63,13 +63,8 @@ export default function UsersPage() {
         if (err.response?.status === 401) {
           const errorMsg = err.response?.data?.message || "Authentication failed. Token may be expired. Please login again.";
           setError(errorMsg);
-          // Don't redirect immediately, show error first
-          setTimeout(() => {
-            if (err.response?.status === 401) {
-              localStorage.clear();
-              window.location.href = "/login";
-            }
-          }, 3000); // Give user 3 seconds to see the error
+          // Don't redirect - axiosClient interceptor will handle it if needed
+          // But for admin endpoints, we want to show the error first
         } else if (err.response?.status === 403) {
           const errorMsg = "Access denied. Admin role required.";
           setError(errorMsg);
