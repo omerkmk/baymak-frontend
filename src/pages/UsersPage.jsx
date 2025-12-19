@@ -30,14 +30,18 @@ export default function UsersPage() {
     
     // Check if user is admin
     const role = localStorage.getItem("role");
+    const token = localStorage.getItem("token");
+    
+    console.log("UsersPage - Role:", role);
+    console.log("UsersPage - Token exists:", !!token);
+    console.log("UsersPage - Token length:", token ? token.length : 0);
+    
     if (role !== "ADMIN") {
-      setError("Access denied. Admin role required.");
+      setError("Access denied. Admin role required. Current role: " + (role || "none"));
       setUsers([]);
       return;
     }
     
-    // Check if token exists
-    const token = localStorage.getItem("token");
     if (!token) {
       setError("No authentication token found. Please login again.");
       setUsers([]);
@@ -47,17 +51,25 @@ export default function UsersPage() {
     axiosClient
       .get("/api/users")
       .then((res) => {
+        console.log("UsersPage - Success:", res.data);
         setUsers(res.data || []);
       })
       .catch((err) => {
-        console.error("Users fetch error:", err);
-        console.error("Error status:", err.response?.status);
-        console.error("Error data:", err.response?.data);
+        console.error("UsersPage - Fetch error:", err);
+        console.error("UsersPage - Error status:", err.response?.status);
+        console.error("UsersPage - Error data:", err.response?.data);
+        console.error("UsersPage - Error headers:", err.response?.headers);
         
         if (err.response?.status === 401) {
-          const errorMsg = "Authentication failed. Please login again.";
+          const errorMsg = err.response?.data?.message || "Authentication failed. Token may be expired. Please login again.";
           setError(errorMsg);
-          // Don't clear localStorage here, let axiosClient interceptor handle it
+          // Don't redirect immediately, show error first
+          setTimeout(() => {
+            if (err.response?.status === 401) {
+              localStorage.clear();
+              window.location.href = "/login";
+            }
+          }, 3000); // Give user 3 seconds to see the error
         } else if (err.response?.status === 403) {
           const errorMsg = "Access denied. Admin role required.";
           setError(errorMsg);
