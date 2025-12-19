@@ -621,7 +621,7 @@ export default function DashboardPage() {
           <div style={sectionHeaderStyle}>
             <h2 style={sectionTitleStyle}>Upcoming Appointments</h2>
             <Link
-              to="/appointments"
+              to="/dashboard/appointments"
               style={viewAllLinkStyle}
               onMouseEnter={(e) => {
                 e.currentTarget.style.color = "#007c30";
@@ -638,7 +638,7 @@ export default function DashboardPage() {
             <div style={emptyStateStyle}>
               <p>No upcoming appointments.</p>
               <Link
-                to="/appointments"
+                to="/dashboard/appointments"
                 style={{
                   ...viewAllLinkStyle,
                   display: "inline-block",
@@ -820,7 +820,7 @@ export default function DashboardPage() {
           <div style={sectionHeaderStyle}>
             <h2 style={sectionTitleStyle}>Pending Appointments</h2>
             <Link
-              to="/appointments"
+              to="/dashboard/appointments"
               style={viewAllLinkStyle}
               onMouseEnter={(e) => {
                 e.currentTarget.style.color = "#007c30";
@@ -902,7 +902,7 @@ export default function DashboardPage() {
             <div style={sectionHeaderStyle}>
               <h2 style={sectionTitleStyle}>Recent Service Reports</h2>
               <Link
-                to="/reports"
+                to="/dashboard/reports"
                 style={viewAllLinkStyle}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.color = "#007c30";
@@ -1143,7 +1143,7 @@ export default function DashboardPage() {
           <div style={sectionHeaderStyle}>
             <h2 style={sectionTitleStyle}>Unassigned Appointments</h2>
             <Link
-              to="/appointments"
+              to="/dashboard/appointments"
               style={viewAllLinkStyle}
               onMouseEnter={(e) => {
                 e.currentTarget.style.color = "#007c30";
@@ -1224,7 +1224,7 @@ export default function DashboardPage() {
           <div style={sectionHeaderStyle}>
             <h2 style={sectionTitleStyle}>Recent Users</h2>
             <Link
-              to="/users"
+              to="/dashboard/users"
               style={viewAllLinkStyle}
               onMouseEnter={(e) => {
                 e.currentTarget.style.color = "#007c30";
