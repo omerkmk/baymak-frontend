@@ -1231,7 +1231,7 @@ export default function AppointmentsPage() {
                 </div>
               </div>
 
-              {role === "ADMIN" && selectedAppointment.customerName && (
+              {(role === "ADMIN" || role === "TECHNICIAN") && selectedAppointment.customerName && (
                 <div style={{ marginBottom: "20px" }}>
                   <span
                     style={{
