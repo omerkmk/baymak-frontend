@@ -27,6 +27,23 @@ export default function UsersPage() {
 
   const fetchUsers = () => {
     setError(null);
+    
+    // Check if user is admin
+    const role = localStorage.getItem("role");
+    if (role !== "ADMIN") {
+      setError("Access denied. Admin role required.");
+      setUsers([]);
+      return;
+    }
+    
+    // Check if token exists
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setError("No authentication token found. Please login again.");
+      setUsers([]);
+      return;
+    }
+    
     axiosClient
       .get("/api/users")
       .then((res) => {
@@ -34,9 +51,21 @@ export default function UsersPage() {
       })
       .catch((err) => {
         console.error("Users fetch error:", err);
-        const errorMsg =
-          err.response?.data?.message || "An error occurred while loading users.";
-        setError(errorMsg);
+        console.error("Error status:", err.response?.status);
+        console.error("Error data:", err.response?.data);
+        
+        if (err.response?.status === 401) {
+          const errorMsg = "Authentication failed. Please login again.";
+          setError(errorMsg);
+          // Don't clear localStorage here, let axiosClient interceptor handle it
+        } else if (err.response?.status === 403) {
+          const errorMsg = "Access denied. Admin role required.";
+          setError(errorMsg);
+        } else {
+          const errorMsg =
+            err.response?.data?.message || "An error occurred while loading users.";
+          setError(errorMsg);
+        }
         setUsers([]);
       });
   };
