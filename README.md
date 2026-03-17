@@ -1,16 +1,107 @@
-# React + Vite
+# Baymak Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Baymak servis yonetimi icin gelistirilmis React tabanli web arayuzu.
+Uygulama; giris/kayit, dashboard ve servis operasyonlarina yonelik temel modulleri icerir.
 
-Currently, two official plugins are available:
+## Ozellikler
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- JWT token ile giris ve korumali sayfa erisimi
+- Randevu, cihaz, teknisyen, kullanici ve servis raporlari ekranlari
+- Profil yonetimi
+- Axios interceptor ile otomatik `Authorization` header yonetimi
+- Yetki/auth hatalarinda merkezi API hata yakalama akisi
 
-## React Compiler
+## Teknolojiler
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- React 19
+- React Router DOM 7
+- Axios
+- Vite
+- ESLint
 
-## Expanding the ESLint configuration
+## Gereksinimler
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- Node.js 18+
+- npm 9+
+- Calisan bir backend servisi (`http://localhost:8080`)
+
+## Kurulum
+
+```bash
+npm install
+```
+
+## Calistirma
+
+Gelisim ortami:
+
+```bash
+npm run dev
+```
+
+Uretim build:
+
+```bash
+npm run build
+```
+
+Build onizleme:
+
+```bash
+npm run preview
+```
+
+Lint:
+
+```bash
+npm run lint
+```
+
+## Route Yapisi
+
+### Public
+
+- `/login`
+- `/register`
+- `/forgot-password`
+
+### Protected (`/dashboard`)
+
+- `/dashboard`
+- `/dashboard/appointments`
+- `/dashboard/devices`
+- `/dashboard/users`
+- `/dashboard/technicians`
+- `/dashboard/profile`
+- `/dashboard/reports`
+
+## API ve Kimlik Dogrulama
+
+- API istemcisi `src/api/axiosClient.js` icinde tanimlidir.
+- Varsayilan `baseURL`: `http://localhost:8080`
+- Token, `localStorage` altinda `token` anahtari ile okunur ve tum isteklere `Bearer` olarak eklenir.
+- `401` durumlarinda interceptor tarafinda yonlendirme/isleme kurallari uygulanir.
+
+## Proje Yapisi
+
+```text
+src/
+  api/
+    axiosClient.js
+  components/
+    Layout.jsx
+    ProtectedRoute.jsx
+  pages/
+    LoginPage.jsx
+    RegisterPage.jsx
+    ForgotPasswordPage.jsx
+    DashboardPage.jsx
+    AppointmentsPage.jsx
+    DevicesPage.jsx
+    UsersPage.jsx
+    TechniciansPage.jsx
+    ProfilePage.jsx
+    ServiceReportsPage.jsx
+  App.jsx
+  main.jsx
+```
