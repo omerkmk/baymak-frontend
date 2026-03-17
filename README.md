@@ -1,17 +1,17 @@
 # Baymak Frontend
 
-Baymak servis yonetimi icin gelistirilmis React tabanli web arayuzu.
-Uygulama; giris/kayit, dashboard ve servis operasyonlarina yonelik temel modulleri icerir.
+React-based web interface developed for Baymak service management.
+The application includes core modules for login/register, dashboard, and service operations.
 
-## Ozellikler
+## Features
 
-- JWT token ile giris ve korumali sayfa erisimi
-- Randevu, cihaz, teknisyen, kullanici ve servis raporlari ekranlari
-- Profil yonetimi
-- Axios interceptor ile otomatik `Authorization` header yonetimi
-- Yetki/auth hatalarinda merkezi API hata yakalama akisi
+- JWT-based authentication and protected route access
+- Pages for appointments, devices, technicians, users, and service reports
+- Profile management
+- Automatic `Authorization` header handling with Axios interceptors
+- Centralized API error handling flow for auth/permission issues
 
-## Teknolojiler
+## Tech Stack
 
 - React 19
 - React Router DOM 7
@@ -19,33 +19,33 @@ Uygulama; giris/kayit, dashboard ve servis operasyonlarina yonelik temel modulle
 - Vite
 - ESLint
 
-## Gereksinimler
+## Requirements
 
 - Node.js 18+
 - npm 9+
-- Calisan bir backend servisi (`http://localhost:8080`)
+- A running backend service (`http://localhost:8080`)
 
-## Kurulum
+## Installation
 
 ```bash
 npm install
 ```
 
-## Calistirma
+## Scripts
 
-Gelisim ortami:
+Development:
 
 ```bash
 npm run dev
 ```
 
-Uretim build:
+Production build:
 
 ```bash
 npm run build
 ```
 
-Build onizleme:
+Preview build:
 
 ```bash
 npm run preview
@@ -57,7 +57,7 @@ Lint:
 npm run lint
 ```
 
-## Route Yapisi
+## Route Structure
 
 ### Public
 
@@ -75,14 +75,14 @@ npm run lint
 - `/dashboard/profile`
 - `/dashboard/reports`
 
-## API ve Kimlik Dogrulama
+## API and Authentication
 
-- API istemcisi `src/api/axiosClient.js` icinde tanimlidir.
-- Varsayilan `baseURL`: `http://localhost:8080`
-- Token, `localStorage` altinda `token` anahtari ile okunur ve tum isteklere `Bearer` olarak eklenir.
-- `401` durumlarinda interceptor tarafinda yonlendirme/isleme kurallari uygulanir.
+- API client is defined in `src/api/axiosClient.js`.
+- Default `baseURL`: `http://localhost:8080`
+- Token is read from `localStorage` with the `token` key and added as `Bearer` to all requests.
+- `401` responses are handled through interceptor-based redirect/processing rules.
 
-## Proje Yapisi
+## Project Structure
 
 ```text
 src/
